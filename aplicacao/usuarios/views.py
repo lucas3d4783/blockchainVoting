@@ -1,3 +1,4 @@
+# _*_ coding: utf-8 _*_ 
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from usuarios.forms import CadastroForm
@@ -11,9 +12,11 @@ def cadastro(request): # criando a view para ser acessado
     context = {'form': form} # variável utilizada para encaminhar as informações para a tela de cadastro
     if request.method == 'POST': # se o formulário foi submetido
         if form.is_valid(): # se todos os campos forem inseridos corretamente
-            form.save(commit=False)
-            form.nome = 'nome'
-            form.save()
+            usuario = form.save(commit=False) # tem que atribuir o form para um objeto para poder realizar as manipulações 
+            x = hashlib.sha256(usuario.senha.encode('utf-8')).hexdigest() #gerando o hash da senha
+            usuario.senha = x
+            
+            usuario.save()
             return redirect('consulta')
     return render(request, 'usuarios/cadastro.html', context)
 

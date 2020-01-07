@@ -12,8 +12,6 @@ class Cadastro(models.Model):
 
     def cadastrar(self):
         self.data = timezone.now()
-        h = hashlib.sha256(self.senha).hexdigest()
-        self.senha = h
         self.save()
 
     def __str__(self):
@@ -21,4 +19,5 @@ class Cadastro(models.Model):
 
     def __unicode__(self): #se nao utilizar o matodo, acontece o erro "UnicodeEncodeError: ascii codec can't encode characters in position 0-3: ordinal not in range(128)"
         return self.nome
+
 
