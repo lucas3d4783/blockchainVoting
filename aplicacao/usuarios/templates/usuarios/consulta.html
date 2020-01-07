@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% for user in usuarios %}
+        <div class="consulta">
+            <h2> {{ user.nome }} {{ user.sobrenome }} </h2>
+            <p><b>Usuário:</b> {{ user.usuario}}</p>
+            <p><b>E-mail:</b> {{ user.email}}</p>
+            <hr>
+        </div>
+    {% endfor %}
+{% endblock %}
