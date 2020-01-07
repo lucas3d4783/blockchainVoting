@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-
+import hashlib
 
 class Cadastro(models.Model):
     usuario = models.CharField(max_length=40)
@@ -12,6 +12,8 @@ class Cadastro(models.Model):
 
     def cadastrar(self):
         self.data = timezone.now()
+        h = hashlib.sha256(self.senha).hexdigest()
+        self.senha = h
         self.save()
 
     def __str__(self):

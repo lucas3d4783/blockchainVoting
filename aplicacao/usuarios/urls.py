@@ -5,6 +5,5 @@ from . import views
 
 urlpatterns = [
     path('', views.consulta, name='consulta'),
-    url(r'^cadastro/$', views.cadastro, name='cadastro'),
-
+    url('/cadastro/', views.cadastro, name='cadastro'),
 ]
