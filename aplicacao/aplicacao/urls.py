@@ -15,9 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from . import views
 
 
 urlpatterns = [
+    path('', views.index, name='index'), # usa-se o name para poder invocar a url posteriormente em algum link (href)
     path('admin/', admin.site.urls),
     path('usuarios', include('usuarios.urls'))
    
