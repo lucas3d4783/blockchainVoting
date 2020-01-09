@@ -2,12 +2,12 @@
 
 {% block content %}
     {% for user in usuarios %}
-        <div class="consulta">
+        <a method="POST" class="btn btn-light btn-block btn-outline-dark" href="{% url 'edicao' pk=user.pk %}"><div> <!--Depois deve ser inserido a pk na url para encaminhar para um usuário específico-->
             <h2> {{ user.nome }} {{ user.sobrenome }} </h2>
             <p><b>Usuário:</b> {{ user.usuario}}</p>
             <p><b>E-mail:</b> {{ user.email}}</p>
             <p><b>Senha:</b> {{ user.senha}}</p>
-            <hr>
-        </div>
+            
+        </div></a>
     {% endfor %}
 {% endblock %}

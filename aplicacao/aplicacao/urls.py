@@ -20,7 +20,9 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'), # usa-se o name para poder invocar a url posteriormente em algum link (href)
+    path('contato', views.contato, name='contato'),
+    path('sobre', views.sobre, name='sobre'),
     path('admin/', admin.site.urls),
-    path('usuarios', include('usuarios.urls'))
+    path('usuarios/', include('usuarios.urls'))
    
 ]
