@@ -2,7 +2,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
 from usuarios.forms import CadastroForm
-from usuarios.models import Cadastro
+from usuarios.models import Usuario
 from django.utils import timezone
 import hashlib
 from django.shortcuts import redirect
@@ -23,11 +23,11 @@ def cadastro(request): #  Criação de usuários
     return render(request, 'usuarios/cadastro.html', context)
 
 def consulta(request): # Listagem dos usuários criados
-    usuarios = Cadastro.objects.filter().order_by('nome') #buscar os usuários no banco e ordenar pelo nome
+    usuarios = Usuario.objects.filter().order_by('nome') #buscar os usuários no banco e ordenar pelo nome
     return render(request, 'usuarios/consulta.html', {'usuarios': usuarios}) #chamar o template de consulta, passando a lista de usuários como parâmetro
 
 def edicao(request, pk): # Edição de usuários 
-    user = get_object_or_404(Cadastro, pk=pk)
+    user = get_object_or_404(Usuario, pk=pk)
     form = CadastroForm(instance=user)
     if request.method == "POST":
         if request.POST['bt'] == "salvar":

@@ -1,4 +1,4 @@
-#!/home/lucas/Desktop/programming/blockchainVoting/venv/bin/python
+#!/home/lucas/Documents/web/blockchainVoting/venv/bin/python
 
 import sys
 import getopt
