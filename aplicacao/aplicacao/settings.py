@@ -25,7 +25,7 @@ SECRET_KEY = 'bd0ts-6nw%k9a(i-6r@=b@4)*+6)k!13-@m2$nlrb+us6=+i%)'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-externo = '192.168.10.115'
+externo = '172.17.11.144'
 
 ALLOWED_HOSTS = [externo, '127.0.0.1']
 
