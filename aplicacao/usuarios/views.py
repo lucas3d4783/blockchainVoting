@@ -1,7 +1,7 @@
 # _*_ coding: utf-8 _*_ 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
-from usuarios.forms import CadastroForm
+from usuarios.forms import CadastroForm, EdicaoForm, AlterarSenhaForm
 from usuarios.models import Usuario
 from django.utils import timezone
 import hashlib
@@ -28,18 +28,40 @@ def consulta(request): # Listagem dos usuários criados
 
 def edicao(request, pk): # Edição de usuários 
     user = get_object_or_404(Usuario, pk=pk)
-    form = CadastroForm(instance=user)
+    form = EdicaoForm(instance=user)
     if request.method == "POST":
         if request.POST['bt'] == "salvar":
-            form = CadastroForm(request.POST, instance=user)
+            form = EdicaoForm(request.POST, instance=user)
             if(form.is_valid()):
-                usuario = form.save(commit=False) # tem que atribuir o form para um objeto para poder realizar as manipulações 
-                usuario.senha = hashlib.sha256(usuario.senha.encode('utf-8')).hexdigest() #gerando o hash da senha
-                usuario.save()
+                #usuario = form.save(commit=False) # tem que atribuir o form para um objeto para poder realizar as manipulações 
+                #usuario.senha = hashlib.sha256(usuario.senha.encode('utf-8')).hexdigest() #gerando o hash da senha
+                form.save()
                 return redirect('consulta')
         elif request.POST['bt'] == 'remover':
             user.delete()
             return redirect('consulta')
+        #elif request.POST['bt'] == 'alterar_senha':
+        #    form = AlterarSenhaForm(instance=user)
+        #    return render(request, 'usuarios/alterar_senha.html', {'form': form, 'user': user}) #deve ser realizado a separação dos elementos que serão enviadas por parâmetro, por vírgula
+                  
     else:
-        form = CadastroForm(instance=user)
-    return render(request, 'usuarios/edicao.html', {'form': form})
+        form = EdicaoForm(instance=user)
+    return render(request, 'usuarios/edicao.html', {'form': form, 'user': user})
+
+def alterar_senha(request, pk): # Alteração de senha 
+    user = get_object_or_404(Usuario, pk=pk)
+    form = AlterarSenhaForm(instance=user)
+    
+    if request.method == "POST":
+        if request.POST['bt'] == "salvar":
+            form = AlterarSenhaForm(request.POST, instance=user)
+            usuario = form.save(commit=False) # tem que atribuir o form para um objeto para poder realizar as manipulações 
+            usuario.senha = hashlib.sha256(usuario.senha.encode('utf-8')).hexdigest() #gerando o hash da senha
+            usuario.save()
+            return redirect('consulta')
+                         
+    else:
+        usuario = form.save(commit=False) 
+        form = AlterarSenhaForm(instance=user)
+
+    return render(request, 'usuarios/alterar_senha.html', {'form': form, 'user': user}) # enviando o objeto user para manipular no template -> mostrar o nome do usuário neste caso

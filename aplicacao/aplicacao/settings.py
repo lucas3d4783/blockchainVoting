@@ -25,7 +25,9 @@ SECRET_KEY = 'bd0ts-6nw%k9a(i-6r@=b@4)*+6)k!13-@m2$nlrb+us6=+i%)'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+externo = '192.168.10.115'
+
+ALLOWED_HOSTS = [externo, '127.0.0.1']
 
 BASE_DIR = 'aplicacao'
 STATIC_ROOT = "/static/"

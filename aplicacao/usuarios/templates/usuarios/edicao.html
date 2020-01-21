@@ -7,6 +7,9 @@
         {{ form.as_p }}
         <button type="submit" class="btn btn-outline-success btn-block" name="bt" value="salvar">Salvar</button>
         <button type="submit" class="btn btn-outline-danger btn-block" name="bt" value="remover">Remover</button>
+        <!--<button type="submit" class="btn btn-outline-danger btn-block" name="bt" value="alterar_senha">Alterar Senha</button>-->
+        <a method="POST" class="btn btn-light btn-block btn-outline-primary" href="{% url 'alterar_senha' pk=user.pk %}">Alterar Senha</a>
+        
     </form>
 
 {% endblock %}
