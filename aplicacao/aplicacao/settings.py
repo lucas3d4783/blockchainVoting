@@ -25,7 +25,7 @@ SECRET_KEY = 'bd0ts-6nw%k9a(i-6r@=b@4)*+6)k!13-@m2$nlrb+us6=+i%)'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-externo = '172.17.11.144'
+externo = '192.168.0.17'
 
 ALLOWED_HOSTS = [externo, '127.0.0.1']
 
@@ -36,6 +36,12 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+
+
+
+MEDIA_URL = '/media/' #endereço para acessar os arquivos
+MEDIA_ROOT ="{}/media".format(BASE_DIR) #pasta media para abrigar os arquivos dos usuários
+
 
 # Application definition
 

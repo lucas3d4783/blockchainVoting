@@ -6,20 +6,28 @@ from usuarios.models import Usuario
 from django.utils import timezone
 import hashlib
 from django.shortcuts import redirect
+from django.db import models
+
+
 
 def index(request): #quando for solicitado o url index, será encaminhado o index.html
     return render(request, 'usuarios/index.html')
 
 def cadastro(request): #  Criação de usuários 
-    form = CadastroForm(request.POST or None) # o formulário pode estar vázio ou não, se estiver apenas carregando o formulário
-    context = {'form': form} # variável utilizada para encaminhar as informações para a tela de cadastro
     if request.method == 'POST': # se o formulário foi submetido
+        form = CadastroForm(request.POST, request.FILES) # Criar o formulário
         if form.is_valid(): # se todos os campos forem inseridos corretamente
             usuario = form.save(commit=False) # tem que atribuir o form para um objeto para poder realizar as manipulações 
-            x = hashlib.sha256(usuario.senha.encode('utf-8')).hexdigest() #gerando o hash da senha
-            usuario.senha = x
+            usuario.senha = hashlib.sha256(usuario.senha.encode('utf-8')).hexdigest() #gerando o hash da senha
             usuario.save()
             return redirect('consulta')
+    else:
+        form = CadastroForm()
+    
+    context = { # variável utilizada para encaminhar as informações para a tela de cadastro
+        'form': form
+        } 
+    
     return render(request, 'usuarios/cadastro.html', context)
 
 def consulta(request): # Listagem dos usuários criados
@@ -28,22 +36,20 @@ def consulta(request): # Listagem dos usuários criados
 
 def edicao(request, pk): # Edição de usuários 
     user = get_object_or_404(Usuario, pk=pk)
-    form = EdicaoForm(instance=user)
     if request.method == "POST":
         if request.POST['bt'] == "salvar":
-            form = EdicaoForm(request.POST, instance=user)
+            #user.foto = request.POST['foto']
+            form = EdicaoForm(request.POST, request.FILES, instance=user) 
             if(form.is_valid()):
-                #usuario = form.save(commit=False) # tem que atribuir o form para um objeto para poder realizar as manipulações 
-                #usuario.senha = hashlib.sha256(usuario.senha.encode('utf-8')).hexdigest() #gerando o hash da senha
+                #usuario = form.save(commit=False)
+                #usuario.foto = Usuario.get_file_path(user, request.POST['foto'])
+                #usuario.save() # não está conseguindo alterar a foto do perfil
                 form.save()
                 return redirect('consulta')
         elif request.POST['bt'] == 'remover':
             user.delete()
             return redirect('consulta')
-        #elif request.POST['bt'] == 'alterar_senha':
-        #    form = AlterarSenhaForm(instance=user)
-        #    return render(request, 'usuarios/alterar_senha.html', {'form': form, 'user': user}) #deve ser realizado a separação dos elementos que serão enviadas por parâmetro, por vírgula
-                  
+
     else:
         form = EdicaoForm(instance=user)
     return render(request, 'usuarios/edicao.html', {'form': form, 'user': user})
