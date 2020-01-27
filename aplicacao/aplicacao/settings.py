@@ -37,6 +37,12 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
+
+
+MEDIA_URL = '/media/' #endereço para acessar os arquivos
+MEDIA_ROOT ="{}/media".format(BASE_DIR) #pasta media para abrigar os arquivos dos usuários
+
+
 # Application definition
 
 INSTALLED_APPS = [
