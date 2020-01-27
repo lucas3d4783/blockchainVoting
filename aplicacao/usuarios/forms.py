@@ -4,14 +4,17 @@ from django import forms
 from .models import Usuario # importando o modelo post criado para usuários
 from django.forms.widgets import ClearableFileInput
 
+
+
+
 class CadastroForm(forms.ModelForm): 
-    foto = forms.ImageField(widget=ClearableFileInput)
+    foto = forms.ImageField(widget={})
+
     class Meta:
         model = Usuario #definindo o modelo como Usuario 
         fields = ('foto', 'tipo', 'curso', 'nome', 'sobrenome', 'usuario', 'email', 'senha') # selecionando os campos do modelo que serão utilizados
         
         widgets = { #estilizando os campos com css e definindo o campo senha como sendo de senha
-            #'foto': forms.ImageField(),
             'nome': forms.TextInput(attrs={'class': 'form-control', 'maxlenght': 100, 'placeholder': 'Digite o nome do usuário'}),
             'sobrenome': forms.TextInput(attrs={'class': 'form-control', 'maxlenght': 100}),
             'email': forms.TextInput(attrs={'class': 'form-control', 'maxlenght': 100}),
