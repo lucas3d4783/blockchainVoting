@@ -47,8 +47,12 @@
 }
 
 
+input[type='file'] {}
 
-
+#id_foto{
+  background-color: black;
+  width: 100%;
+}
 
 
 

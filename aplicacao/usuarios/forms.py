@@ -8,12 +8,12 @@ from django.forms.widgets import ClearableFileInput
 
 
 class CadastroForm(forms.ModelForm): 
-    foto = forms.ImageField(widget={})
+    
+    foto = forms.ImageField(widget=ClearableFileInput(attrs={'class': 'fileUpload'}), label="Escolha uma Foto" )
 
     class Meta:
         model = Usuario #definindo o modelo como Usuario 
         fields = ('foto', 'tipo', 'curso', 'nome', 'sobrenome', 'usuario', 'email', 'senha') # selecionando os campos do modelo que serão utilizados
-        
         widgets = { #estilizando os campos com css e definindo o campo senha como sendo de senha
             'nome': forms.TextInput(attrs={'class': 'form-control', 'maxlenght': 100, 'placeholder': 'Digite o nome do usuário'}),
             'sobrenome': forms.TextInput(attrs={'class': 'form-control', 'maxlenght': 100}),
@@ -34,7 +34,7 @@ class CadastroForm(forms.ModelForm):
         }
 
 class EdicaoForm(forms.ModelForm): 
-    foto = forms.ImageField(widget=ClearableFileInput)  
+    foto = forms.ImageField(widget=ClearableFileInput(attrs={'class': ''}))  
     class Meta:
         model = Usuario #definindo o modelo como Usuario 
         fields = ('foto', 'tipo', 'curso', 'nome', 'sobrenome', 'usuario', 'email') # selecionando os campos do modelo que serão utilizados
