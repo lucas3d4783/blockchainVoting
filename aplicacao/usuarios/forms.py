@@ -9,7 +9,7 @@ from django.forms.widgets import ClearableFileInput
 
 class CadastroForm(forms.ModelForm): 
     
-    foto = forms.ImageField(widget=ClearableFileInput(attrs={'class': 'fileUpload'}), label="Escolha uma Foto" )
+    foto = forms.ImageField(widget=ClearableFileInput(attrs={'class': ''}), label="" )
 
     class Meta:
         model = Usuario #definindo o modelo como Usuario 
