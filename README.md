@@ -1,6 +1,6 @@
 # blockchainVoting
 
-## Intalação do ambiente virtual (opcional)
+## Intalação do Ambiente Virtual (opcional)
 
 pip intall virtualenv
 
@@ -8,7 +8,7 @@ virtualenv venv
 
 source venv/bin/activate
 
-## Ambiente
+## Configuração do Ambiente
 
 sudo apt install python3.x
 
