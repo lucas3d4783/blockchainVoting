@@ -4,7 +4,7 @@
 {% block content %}
 
     <h2>Edição de Usuários</h2>
-    <form method="POST" class="post-form">{% csrf_token %}
+    <form method="POST" class="post-form" enctype="multipart/form-data">{% csrf_token %}
         <p>
             <!--<img class="img-fluid" src="{% static 'media/icons-input-img/camera.png' %}"> --><label for="id_foto">Imagem do Perfil: </label> 
             <br>
@@ -31,7 +31,6 @@
         </p>
 
 
-        <button type="submit" class="btn btn-outline-success btn-block">Cadastrar</button>
         <button type="submit" class="btn btn-outline-success btn-block" name="bt" value="salvar">Salvar</button>
         <button type="submit" class="btn btn-outline-danger btn-block" name="bt" value="remover">Remover</button>
         <!--<button type="submit" class="btn btn-outline-danger btn-block" name="bt" value="alterar_senha">Alterar Senha</button>-->
