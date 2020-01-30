@@ -1,4 +1,4 @@
-# blockchainVoting
+# BlockchainVoting
 
 ## Intalação do Ambiente Virtual (opcional)
 
