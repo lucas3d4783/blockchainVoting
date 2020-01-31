@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 import hashlib
 from django.utils.translation import ugettext_lazy as _
-from cursos.models import Cursos
+from cursos.models import Curso
 import uuid
 import os
 from datetime import date
@@ -36,7 +36,7 @@ class Usuario(models.Model):
                                         ("Candidato", _("Candidato"))),
                                 default="Eleitor") # vai definir Eleitor como a opção default
  
-    curso = models.ForeignKey(Cursos, on_delete=models.CASCADE, default="") #chave estrangeira da tabela curso
+    curso = models.ForeignKey(Curso, on_delete=models.CASCADE, default="") #chave estrangeira da tabela curso
 
     def __str__(self):
         return self.nome
