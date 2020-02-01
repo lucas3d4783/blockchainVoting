@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from cursos.forms import CadastroForm
-from cursos.models import Cursos
+from cursos.models import Curso
 
 # Create your views here.
 
@@ -19,11 +19,11 @@ def cadastro(request): #  Criação de cursos
     return render(request, 'cursos/cadastro.html', context)
 
 def consulta(request): # Listagem dos cursos criados
-    cursos = Cursos.objects.filter().order_by('nome') #buscar os cursos no banco e ordenar pelo nome
+    cursos = Curso.objects.filter().order_by('nome') #buscar os cursos no banco e ordenar pelo nome
     return render(request, 'cursos/consulta.html', {'cursos': cursos}) #chamar o template de consulta, passando a lista de cursos como parâmetro
 
 def edicao(request, pk): # Edição de cursos 
-    curso = get_object_or_404(Cursos, pk=pk)
+    curso = get_object_or_404(Curso, pk=pk)
     form = CadastroForm(instance=curso)
     if request.method == "POST":
         if request.POST['bt'] == "salvar":

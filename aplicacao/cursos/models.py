@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 import hashlib
 
-class Cursos(models.Model):
+class Curso(models.Model):
     nome = models.CharField(max_length=100)
     descricao = models.CharField(max_length=500)
     carga_horaria = models.IntegerField()

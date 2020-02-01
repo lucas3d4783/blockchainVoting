@@ -7,6 +7,8 @@ from django.utils import timezone
 import hashlib
 from django.shortcuts import redirect
 from django.db import models
+# Função imaginária para manipular um upload de arquivo.
+#from usuarios.models import handle_uploaded_file
 
 
 
@@ -42,9 +44,10 @@ def edicao(request, pk): # Edição de usuários
             form = EdicaoForm(request.POST, request.FILES, instance=user) 
             if(form.is_valid()):
                 #usuario = form.save(commit=False)
+                #handle_uploaded_file(request.FILES['foto'], Usuario.get_file_path(user, request.POST['foto']))
                 #usuario.foto = Usuario.get_file_path(user, request.POST['foto'])
-                #usuario.save() # não está conseguindo alterar a foto do perfil
-                form.save()
+                #usuario.save() # não está conseguindo alterar a foto do perfil 
+                form.save() # para funcionar a tualização de imagens, foi necessário a instalação do módulo pill (pip install pillow)
                 return redirect('consulta')
         elif request.POST['bt'] == 'remover':
             user.delete()

@@ -1,10 +1,36 @@
 {% extends "base.html" %}
+{% load static %}
     
 {% block content %}
 
     <h2>Edição de Usuários</h2>
-    <form method="POST" class="post-form">{% csrf_token %}
-        {{ form.as_p }}
+    <form method="POST" class="post-form" enctype="multipart/form-data">{% csrf_token %}
+        <p>
+            <!--<img class="img-fluid" src="{% static 'media/icons-input-img/camera.png' %}"> --><label for="id_foto">Imagem do Perfil: </label> 
+            <br>
+            {{form.foto}}
+        </p>
+        
+        <p>
+            <label for='id_tipo'>Tipo: </label>{{form.tipo}}
+        </p>
+        <p>
+            <label for='id_curso'>Curso: </label>{{form.curso}}
+        </p>
+        <p>
+            <label for='id_nome'>Nome: </label>{{form.nome}}
+        </p>
+        <p>
+            <label for='id_sobrenome'>Sobrenome: </label>{{form.sobrenome}}
+        </p>
+        <p>
+            <label for='id_usuario'>Usuário: </label>{{form.usuario}}
+        </p>
+        <p>
+            <label for='id_email'>E-mail: </label>{{form.email}}
+        </p>
+
+
         <button type="submit" class="btn btn-outline-success btn-block" name="bt" value="salvar">Salvar</button>
         <button type="submit" class="btn btn-outline-danger btn-block" name="bt" value="remover">Remover</button>
         <!--<button type="submit" class="btn btn-outline-danger btn-block" name="bt" value="alterar_senha">Alterar Senha</button>-->
