@@ -22,8 +22,8 @@ def get_file_path(instance, filename): #função para gerar um nome único para 
 
 class Usuario(models.Model):
     usuario = models.CharField(max_length=40)
-    nome =  models.CharField(max_length=100)
-    sobrenome =  models.CharField(max_length=100)
+    nome =  models.CharField(max_length=40)
+    sobrenome =  models.CharField(max_length=40)
     email = models.EmailField(max_length=100)
     senha = models.CharField(max_length=50)
 

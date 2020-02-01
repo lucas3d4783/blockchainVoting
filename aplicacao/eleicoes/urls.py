@@ -6,8 +6,7 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index_eleicoes'),
-    #path('consulta/', views.consulta, name='consulta'),
-    #url('cadastro/', views.cadastro, name='cadastro'),
-    #url(r'^edit/(?P<pk>[0-9]+)$', views.edicao, name='edicao'),
-    #url(r'^alterarSenha/(?P<pk>[0-9]+)$', views.alterar_senha, name='alterar_senha'),
+    path('consulta/', views.consulta, name='consulta_eleicoes'),
+    url('cadastro/', views.cadastro, name='cadastro_eleicoes'),
+    url(r'^edit/(?P<pk>[0-9]+)$', views.edicao, name='edicao_eleicoes'),
 ]

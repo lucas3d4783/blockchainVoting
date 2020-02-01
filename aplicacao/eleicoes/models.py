@@ -17,5 +17,5 @@ class Eleicao(models.Model):
     def __str__(self):
         return self.nome
 
-    def __unicode__(self): #se nao utilizar o matodo, acontece o erro "UnicodeEncodeError: ascii codec can't encode characters in position 0-3: ordinal not in range(128)"
+    def __unicode__(self): #se nao utilizar o método, acontece o erro "UnicodeEncodeError: ascii codec can't encode characters in position 0-3: ordinal not in range(128)"
         return self.nome

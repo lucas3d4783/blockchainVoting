@@ -24,10 +24,10 @@ def consulta(request): # Listagem dos cursos criados
 
 def edicao(request, pk): # Edição de cursos 
     curso = get_object_or_404(Curso, pk=pk)
-    form = CadastroForm(instance=curso)
+    form = EdicaoForm(instance=curso)
     if request.method == "POST":
         if request.POST['bt'] == "salvar":
-            form = CadastroForm(request.POST, instance=curso)
+            form = EdicaoForm(request.POST, instance=curso)
             if(form.is_valid()):
                 form.save()
                 return redirect('consulta_cursos')
@@ -35,5 +35,5 @@ def edicao(request, pk): # Edição de cursos
             curso.delete()
             return redirect('consulta_cursos')
     else:
-        form = CadastroForm(instance=curso)
+        form = EdicaoForm(instance=curso)
     return render(request, 'cursos/edicao.html', {'form': form})

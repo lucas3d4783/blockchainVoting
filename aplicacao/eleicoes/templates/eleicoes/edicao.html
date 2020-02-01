@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <h2>Edição de Eleições</h2>
+    <form method="POST" class="post-form">{% csrf_token %}
+         <!--{% csrf_token %}  adiciona uma camada de segurança no formulário-->
+        
+        <p>
+            <label for='id_tipo'>Tipo: </label>{{form.tipo}}
+        </p>
+        <p>
+            <label for='id_nome'>Nome: </label>{{form.nome}}
+        </p>
+        <p>
+            <label for='id_descricao'>Descrição: </label>{{form.descricao}}
+        </p>
+        <p>
+            <label for='id_data_ini'>Data Inicial: </label>{{form.data_ini}}
+        </p>
+        <p>
+            <label for='id_data_fim'>Data Final: </label>{{form.data_fim}}
+        </p>
+
+
+        <button type="submit" class="btn btn-outline-success btn-block" name="bt" value="salvar">Salvar</button>
+        <button type="submit" class="btn btn-outline-danger btn-block" name="bt" value="remover">Remover</button>
+    </form>
+
+{% endblock %}

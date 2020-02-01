@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <!--<a  href="#" class="btn btn-outline-success btn-block btn-lg">Cadastro</a>
-    <a  href="#" class="btn btn-outline-success btn-block btn-lg">Consulta</a>-->
+    <a  href="{% url 'cadastro_eleicoes' %}" class="btn btn-outline-success btn-block btn-lg">Cadastro</a>
+    <a  href="{% url 'consulta_eleicoes' %}" class="btn btn-outline-success btn-block btn-lg">Consulta</a>
 {% endblock %}
