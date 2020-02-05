@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from cursos.forms import CadastroForm
+from cursos.forms import CadastroForm, EdicaoForm
 from cursos.models import Curso
 
 # Create your views here.

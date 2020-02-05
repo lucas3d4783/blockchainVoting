@@ -9,7 +9,7 @@ class CadastroForm(forms.ModelForm):
         fields = ('tipo', 'nome', 'descricao', 'data_ini', 'data_fim') # selecionando os campos do modelo que serão utilizados
         widgets = { #estilizando os campos com css e definindo o campo senha como sendo de senha
             'nome': forms.TextInput(attrs={'class': 'form-control', 'maxlenght': 40, 'placeholder': 'Digite um nome para a Eleição', 'title': 'Nome da Eleição', 'required': True}),
-            'descricao': forms.TextInput(attrs={'class': 'form-control', 'maxlenght': 100, 'placeholder': 'Descreva a Eleição', 'title': 'Descrição da Eleição', 'required': True}),
+            'descricao': forms.Textarea(attrs={'class': 'form-control', 'maxlenght': 100, 'placeholder': 'Descreva a Eleição', 'title': 'Descrição da Eleição', 'required': True}),
             'tipo': forms.Select(attrs={'class': 'custom-select', 'maxlenght': 20, 'title': 'Tipo de Eleição', 'required': True}), #select para uma lista predefinida no model
         }
 
@@ -26,6 +26,6 @@ class EdicaoForm(forms.ModelForm):
         fields = ('tipo', 'nome', 'descricao', 'data_ini', 'data_fim') # selecionando os campos do modelo que serão utilizados
         widgets = { #estilizando os campos com css e definindo o campo senha como sendo de senha
             'nome': forms.TextInput(attrs={'class': 'form-control', 'maxlenght': 40, 'placeholder': 'Digite um nome para a Eleição', 'title': 'Nome da Eleição', 'required': True}),
-            'descricao': forms.TextInput(attrs={'class': 'form-control', 'maxlenght': 100, 'placeholder': 'Descreva a Eleição', 'title': 'Descrição da Eleição', 'required': True}),
+            'descricao': forms.Textarea(attrs={'class': 'form-control', 'maxlenght': 100, 'placeholder': 'Descreva a Eleição', 'title': 'Descrição da Eleição', 'required': True}),
             'tipo': forms.Select(attrs={'class': 'custom-select', 'maxlenght': 20, 'title': 'Tipo de Eleição', 'required': True}), #select para uma lista predefinida no model
         }
