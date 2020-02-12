@@ -10,7 +10,7 @@
             
             <h2> {{ user.nome }} {{ user.sobrenome }} </h2>
             {% if user.foto %} <!--Teste para verificar se o usuário possui imagem no perfil-->
-                <img class="img-fluid" src="{{ user.foto.url }}" alt="Era pra aparecer uma imagem aqui!"><br>
+                <img class="img-fluid" src="{{ user.foto.url }}" alt="Era pra aparecer uma imagem aqui!"  width="25%"><br>
                 <!--{{ user.foto.url }}<br>  Caminho da imagem-->
             {% endif %}
             <p><b>Curso:</b> {{ user.curso}}</p>

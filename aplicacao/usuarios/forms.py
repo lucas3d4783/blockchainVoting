@@ -16,10 +16,10 @@ class CadastroForm(forms.ModelForm):
         fields = ('foto', 'tipo', 'curso', 'nome', 'sobrenome', 'usuario', 'email', 'senha') # selecionando os campos do modelo que serão utilizados
         widgets = { #estilizando os campos com css e definindo o campo senha como sendo de senha
             'nome': forms.TextInput(attrs={'class': 'form-control', 'maxlenght': 40, 'placeholder': 'Digite o nome do usuário'}),
-            'sobrenome': forms.TextInput(attrs={'class': 'form-control', 'maxlenght': 40}),
-            'email': forms.TextInput(attrs={'class': 'form-control', 'maxlenght': 100}),
-            'usuario': forms.TextInput(attrs={'class': 'form-control', 'maxlenght': 40}),
-            'senha': forms.PasswordInput(attrs={'class': 'form-control', 'maxlenght': 50}),
+            'sobrenome': forms.TextInput(attrs={'class': 'form-control', 'maxlenght': 40, 'placeholder': 'Digite o sobrenome do usuário'}),
+            'email': forms.TextInput(attrs={'class': 'form-control', 'maxlenght': 100, 'placeholder': 'Ex: exemplo@exemplo.com'}),
+            'usuario': forms.TextInput(attrs={'class': 'form-control', 'maxlenght': 40, 'placeholder': 'Ex: nome.sobrenome'}),
+            'senha': forms.PasswordInput(attrs={'class': 'form-control', 'maxlenght': 50, 'placeholder': 'Escolha uma senha forte'}),
             'tipo': forms.Select(attrs={'class': 'custom-select', 'maxlenght': 20}), #select para uma lista predefinida no model
             'curso': forms.Select(attrs={'class': 'custom-select', 'maxlenght': 50}), #select para selecionar o curso de outra tabela (a chave estrangeira foi definida no model)
         }
