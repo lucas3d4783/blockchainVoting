@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <h1>{{eleicao.nome}}</h1>
+
+    <form method="POST" class="post-form">{% csrf_token %}
+        <!--<p>
+            <label for='id_eleicao'>Eleição: </label>{{form.eleicao}}
+        </p>-->
+        <p>
+            <label for='id_candidato'>Candidato: </label>{{form.candidato}}
+        </p>
+        <button type="submit" class="btn btn-outline-success btn-block">Adicionar</button>
+    </form>
+
+    <hr>
+    <h2>Lista de Candidatos</h2>
+
+
+    <hr>
+
+{% endblock %}

@@ -22,6 +22,28 @@
             <label for='id_data_fim'>Data Final: </label>{{form.data_fim}}
         </p>
 
+        <!-- Deve ser criado um campo para a adição de candidatos (filtrar usuários que são candidatos) 
+        O valor do campo deve ser configurado com java sript para adicionar todos os ids em forma de texto 
+        Ou pode ser criado uma tela nova só para realizar a tarefa de adicionar candidatos -->
+        <hr>
+        <div class="btn btn-block">
+            <p>Adicionar novo CANDIDATO</p>
+            <a href="{% url 'addCandidatos' pk=eleicao.pk %}" >
+                <img type="button" class="img-fluid" name="addCandidato" style="width: 5%;" src="{% static 'media/icons/add-circle-outline.svg' %}">
+            </a>
+                <!--<script>addCandidato()</script>-->
+        </div>
+        <hr>
+        <!-- Deve ser criado um campo para a adição de eleitores (filtrar usuários que são eleitores) -->
+        <div class="btn btn-block">
+            <p>Adicionar novo ELEITOR</p>
+            <a  href="{% url 'addEleitores' pk=eleicao.pk %}">
+                <img type="button" class="img-fluid" name="addEleitor" style="width: 5%;" src="{% static 'media/icons/add-circle-outline.svg' %}">
+            </a>
+                <!--<script>addCandidato()</script>-->
+        </div>
+        <hr>
+
 
         <button type="submit" class="btn btn-outline-success btn-block" name="bt" value="salvar">Salvar</button>
         <button type="submit" class="btn btn-outline-danger btn-block" name="bt" value="remover">Remover</button>

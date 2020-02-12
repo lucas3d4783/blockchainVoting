@@ -19,3 +19,26 @@ class Eleicao(models.Model):
 
     def __unicode__(self): #se nao utilizar o método, acontece o erro "UnicodeEncodeError: ascii codec can't encode characters in position 0-3: ordinal not in range(128)"
         return self.nome
+
+
+#tabela para o armazenamento das chaves estrangeiras de candidatos (usuários) e eleição
+class Eleicao_candidato(models.Model):
+    eleicao = models.ForeignKey(Eleicao, on_delete=models.CASCADE, default="") #chave estrangeira da tabela eleicao
+    candidato = models.ForeignKey(Usuario, on_delete=models.CASCADE, default="") #chave estrangeira da tabela usuario
+
+    def __str__(self):
+        return self.candidato.nome
+
+    def __unicode__(self): #se nao utilizar o método, acontece o erro "UnicodeEncodeError: ascii codec can't encode characters in position 0-3: ordinal not in range(128)"
+        return self.candidato.nome
+
+#tabela para o armazenamento das chaves estrangeiras de eleitores (usuários) e eleição
+class Eleicao_eleitor(models.Model):
+    eleicao = models.ForeignKey(Eleicao, on_delete=models.CASCADE, default="") #chave estrangeira da tabela eleicao
+    eleitor = models.ForeignKey(Usuario, on_delete=models.CASCADE, default="") #chave estrangeira da tabela usuario
+
+    def __str__(self):
+        return self.candidato.nome
+
+    def __unicode__(self): #se nao utilizar o método, acontece o erro "UnicodeEncodeError: ascii codec can't encode characters in position 0-3: ordinal not in range(128)"
+        return self.candidato.nome
