@@ -18,4 +18,4 @@ pip3  install django==2.2.6
 
 pip3 install pillow
 
-![alt text](https://raw.githubusercontent.com/lucas3d4783/blockchainVoting/prints/1.png)
+![Screenshot](prints/1.png)
