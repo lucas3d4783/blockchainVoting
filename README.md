@@ -21,13 +21,16 @@ pip3 install pillow
 
 # Algumas Telas do Sistema
 ## Desktop
-![Screenshot](prints/3.png)
-![Screenshot](prints/4.png)
-![Screenshot](prints/5.png)
+<div style="padding=2%">
+  ![Screenshot](prints/3.png)
+  ![Screenshot](prints/4.png)
+  ![Screenshot](prints/5.png)
+</div>
 ## Mobile
 
-<div align="center">
+<div align="center" style="padding=2%">
   <img src="prints/6.jpg" class="img-fluid" style="" width="50%" height="50%">
   <img src="prints/7.jpg" class="img-fluid" width="50%" height="50%">
   <img src="prints/8.jpg" class="img-fluid" width="50%" height="50%">
 </div>
+
