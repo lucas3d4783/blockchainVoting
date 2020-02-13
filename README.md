@@ -22,9 +22,11 @@ pip3 install pillow
 # Algumas Telas do Sistema
 ## Desktop
 <div style="padding=2%">
-  ![Screenshot](prints/3.png)
-  ![Screenshot](prints/4.png)
-  ![Screenshot](prints/5.png)
+  <div align="center" style="padding=2%">
+  <img src="prints/3.png" class="img-fluid" style="" width="95%">
+  <img src="prints/4.png" class="img-fluid" width="95%">
+  <img src="prints/5.png" class="img-fluid" width="95%">
+</div>
 </div>
 ## Mobile
 
