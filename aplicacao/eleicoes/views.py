@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Eleicao
+from .models import Eleicao, Eleicao_candidato, Eleicao_eleitor
 from .forms import CadastroForm, EdicaoForm, CadastroFormEleicao_candidatos, CadastroFormEleicao_eleitores
 
 def index(request): #quando for solicitado o url index, será encaminhado o index.html
@@ -63,19 +63,32 @@ def cadastro_eleicao_candidatos(request, pk): #  ligação entre as tabelas elei
 
 def cadastro_eleicao_eleitores(request, pk): #  ligação entre as tabelas eleições e seus respectivos candidatos
     eleicao = get_object_or_404(Eleicao, pk=pk) # criando um objeto de eleicao para ser utilizado na tela de adição de candidatos
+    eleicao_eleitores = Eleicao_eleitor.objects.all() # buscando os objetos referentes aos candidatos da eleição objeto de candidatos para ser utilizado na tela de adição de candidatos
+    existe=False
+    #Eleicao_eleitor.objects.all().delete()
     if request.method == 'POST': # se o formulário foi submetido
         form = CadastroFormEleicao_eleitores(request.POST) # Criar o formulário
         if form.is_valid(): # se todos os campos forem inseridos corretamente
             aux = form.save(commit=False)
-            aux.eleicao = eleicao;
-            aux.save();
+            aux.eleicao = eleicao # realizando a ligação da tabela eleição com Eleicao_eleitores
+            for e_e in eleicao_eleitores: #só permitir um cadastro de cada eleitor
+                #print(e_e.eleicao.pk)
+                #print(eleicao.pk)
+                #print(e_e.eleitor.pk)
+                #print(aux.eleitor.pk)
+                if e_e.eleitor.pk == aux.eleitor.pk and e_e.eleicao.pk == eleicao.pk : #teste para verificar se já há o registro no banco
+                    existe = True; # caso exista, existe vira true
+            if not existe: # realiza o commit apenas se não existir o registro no banco
+                aux.save();
+
             return redirect('addEleitores', pk)
     else:
         form = CadastroFormEleicao_eleitores()
 
     context = { # variável utilizada para encaminhar as informações para a tela de cadastro
         'form': form, 
-        'eleicao': eleicao
+        'eleicao': eleicao,
+        'eleicao_eleitores': eleicao_eleitores,
     } 
 
     return render(request, 'eleicoes/addEleitores.html', context)

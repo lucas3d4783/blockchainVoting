@@ -16,7 +16,10 @@
 
     <hr>
     <h2>Lista de Eleitores</h2>
-
+    {% for eleicao_eleitor in eleicao_eleitores %}
+        <hr>
+            -> {{eleicao_eleitor.eleitor}} {{eleicao_eleitor.eleitor.sobrenome}}
+    {% endfor %}
 
     <hr>
 {% endblock %}
