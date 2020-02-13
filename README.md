@@ -28,4 +28,4 @@ pip3 install pillow
 ![](prints/6.jpg){:height="50%" width="50%"}
 ![](prints/7.jpg){:height="50%" width="50%"}
 ![](prints/8.jpg){:height="50%" width="50%"}
-<img src="https://github.com/lucas3d4783/blockchainVoting/prints/8.jpg" width="100" height="100">
+<img src="prints/4.png" width="100" height="100">
