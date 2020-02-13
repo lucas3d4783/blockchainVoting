@@ -61,7 +61,7 @@ def cadastro_eleicao_candidatos(request, pk): #  ligação entre as tabelas elei
                     aux.save();
             if request.POST['bt'] == "remover": #caso seja clicado no botão remover, será deletado o registro que contém o respectivo eleitor na respectiva eleição
                 Eleicao_candidato.objects.filter(eleicao__pk=pk, candidato=aux.candidato).delete() #encontrar o respectiva linha na tabela e depois deletar a mesma
-            return redirect('addCandidatos', pk)
+            return redirect('edCandidatos', pk)
     else:
         form = CadastroFormEleicao_candidatos()
     
@@ -71,7 +71,7 @@ def cadastro_eleicao_candidatos(request, pk): #  ligação entre as tabelas elei
         'eleicao_candidatos': eleicao_candidatos,
     } 
     
-    return render(request, 'eleicoes/addCandidatos.html', context)
+    return render(request, 'eleicoes/edCandidatos.html', context)
 
 def cadastro_eleicao_eleitores(request, pk): #  ligação entre as tabelas eleições e seus respectivos candidatos
     eleicao = get_object_or_404(Eleicao, pk=pk) # criando um objeto de eleicao para ser utilizado na tela de adição de candidatos
@@ -99,7 +99,7 @@ def cadastro_eleicao_eleitores(request, pk): #  ligação entre as tabelas elei�
                 Eleicao_eleitor.objects.filter(eleicao__pk=pk, eleitor=aux.eleitor).delete() #encontrar o respectiva linha na tabela e depois deletar a mesma
 
 
-            return redirect('addEleitores', pk)
+            return redirect('edEleitores', pk)
     else:
         form = CadastroFormEleicao_eleitores()
 
@@ -110,4 +110,4 @@ def cadastro_eleicao_eleitores(request, pk): #  ligação entre as tabelas elei�
         'eleicao_eleitores': eleicao_eleitores,
     } 
 
-    return render(request, 'eleicoes/addEleitores.html', context)
+    return render(request, 'eleicoes/edEleitores.html', context)

@@ -27,18 +27,18 @@
         Ou pode ser criado uma tela nova só para realizar a tarefa de adicionar candidatos -->
         <hr>
         <div class="btn btn-block">
-            <p>Adicionar novo CANDIDATO</p>
-            <a href="{% url 'addCandidatos' pk=eleicao.pk %}" >
-                <img type="button" class="img-fluid" name="addCandidato" style="width: 5%;" src="{% static 'media/icons/add-circle-outline.svg' %}">
+            <p>Gerenciar CANDIDATOS</p>
+            <a href="{% url 'edCandidatos' pk=eleicao.pk %}" >
+                <img type="button" class="img-fluid" name="addCandidato" style="width: 5%;" src="{% static 'media/icons/cog.svg' %}">
             </a>
                 <!--<script>addCandidato()</script>-->
         </div>
         <hr>
         <!-- Deve ser criado um campo para a adição de eleitores (filtrar usuários que são eleitores) -->
         <div class="btn btn-block">
-            <p>Adicionar novo ELEITOR</p>
-            <a  href="{% url 'addEleitores' pk=eleicao.pk %}">
-                <img type="button" class="img-fluid" name="addEleitor" style="width: 5%;" src="{% static 'media/icons/add-circle-outline.svg' %}">
+            <p>Gerenciar ELEITORES</p>
+            <a  href="{% url 'edEleitores' pk=eleicao.pk %}">
+                <img type="button" class="img-fluid" name="addEleitor" style="width: 5%;" src="{% static 'media/icons/cog.svg' %}">
             </a>
                 <!--<script>addCandidato()</script>-->
         </div>
