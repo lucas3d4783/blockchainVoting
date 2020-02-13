@@ -85,6 +85,7 @@ def cadastro_eleicao_eleitores(request, pk): #  ligação entre as tabelas elei�
     else:
         form = CadastroFormEleicao_eleitores()
 
+    eleicao_eleitores = Eleicao_eleitor.objects.filter(eleicao__pk=pk)
     context = { # variável utilizada para encaminhar as informações para a tela de cadastro
         'form': form, 
         'eleicao': eleicao,
