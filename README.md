@@ -25,6 +25,6 @@ pip3 install pillow
 ![Screenshot](prints/4.png)
 ![Screenshot](prints/5.png)
 ## Mobile
-![](prints/6.jpg =250x250)
-![](prints/7.jpg | width=100)
-![](prints/8.jpg | width=100)
+![](prints/6.jpg){:height="50%" width="50%"}
+![](prints/7.jpg){:height="50%" width="50%"}
+![](prints/8.jpg){:height="50%" width="50%"}
