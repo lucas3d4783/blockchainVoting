@@ -21,10 +21,10 @@ pip3 install pillow
 
 # Algumas Telas do Sistema
 ## Desktop
-![Screenshot](prints/3.png)
-![Screenshot](prints/4.png)
-![Screenshot](prints/5.png)
+![](prints/3.png)
+![](prints/4.png)
+![](prints/5.png)
 ## Mobile
-![Screenshot](prints/6.jpg | width=100)
-![Screenshot](prints/7.jpg)
-![Screenshot](prints/8.jpg)
+![](prints/6.jpg | width=100)
+![](prints/7.jpg | width=100)
+![](prints/8.jpg | width=100)
