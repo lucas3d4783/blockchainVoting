@@ -25,6 +25,6 @@ pip3 install pillow
 ![Screenshot](prints/4.png)
 ![Screenshot](prints/5.png)
 ## Mobile
-![Screenshot](prints/6.png)
-![Screenshot](prints/7.png)
-![Screenshot](prints/8.png)
+![Screenshot](prints/6.jpg)
+![Screenshot](prints/7.jpg)
+![Screenshot](prints/8.jpg)
