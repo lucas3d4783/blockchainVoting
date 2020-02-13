@@ -29,8 +29,8 @@ pip3 install pillow
 
 ## Mobile
 <div align="center">
-  <img src="prints/6.jpg" class="img-fluid" style="" width="50%">
-  <img src="prints/7.jpg" class="img-fluid" width="50%">
-  <img src="prints/8.jpg" class="img-fluid" width="50%">
+  <img src="prints/6.jpg" class="img-fluid" style="" width="45%">
+  <img src="prints/7.jpg" class="img-fluid" width="45%">
+  <img src="prints/8.jpg" class="img-fluid" width="45%">
 </div>
 
