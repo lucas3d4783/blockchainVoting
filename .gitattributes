@@ -1,3 +1,3 @@
-static/* linguist-vendored
 aplicacao/static/* linguist-vendored
-aplicacao/templates/* linguist-vendored
+aplicacao/aplicacao/static/* linguist-vendored
+aplicacao/aplicacao/templates/* linguist-vendored
