@@ -56,7 +56,7 @@ def cadastro_eleicao_candidatos(request, pk): #  ligação entre as tabelas elei
                 if e_c.candidato.pk == aux.candidato.pk and e_c.eleicao.pk == eleicao.pk: #teste para verificar se já há o registro no banco
                     existe = True; # caso exista, existe vira true
             if request.POST['bt'] == "adicionar":
-                print('adicionar')
+                #print('adicionar')
                 if not existe: # realiza o commit apenas se não existir o registro no banco
                     aux.save();
             if request.POST['bt'] == "remover": #caso seja clicado no botão remover, será deletado o registro que contém o respectivo eleitor na respectiva eleição
@@ -64,11 +64,12 @@ def cadastro_eleicao_candidatos(request, pk): #  ligação entre as tabelas elei
             return redirect('edCandidatos', pk)
     else:
         form = CadastroFormEleicao_candidatos()
-    
+
+    eleicao_candidatos = Eleicao_candidato.objects.filter(eleicao__pk=pk) # deve ser criado a lista dos candidatos da respectiva eleição 
     context = { # variável utilizada para encaminhar as informações para a tela de cadastro
-        'form': form, 
-        'eleicao': eleicao,
-        'eleicao_candidatos': eleicao_candidatos,
+        'form': form, # informando o formulário para o gerenciamento de candidatos
+        'eleicao': eleicao, # passando as informações da eleição atual
+        'eleicao_candidatos': eleicao_candidatos, # passando a lista de candidatos
     } 
     
     return render(request, 'eleicoes/edCandidatos.html', context)
@@ -91,11 +92,11 @@ def cadastro_eleicao_eleitores(request, pk): #  ligação entre as tabelas elei�
                 if e_e.eleitor.pk == aux.eleitor.pk and e_e.eleicao.pk == eleicao.pk : #teste para verificar se já há o registro no banco
                     existe = True; # caso exista, existe vira true
             if request.POST['bt'] == "adicionar":
-                print('adicionar')
+                #print('adicionar')
                 if not existe: # realiza o commit apenas se não existir o registro no banco
                     aux.save();
             if request.POST['bt'] == "remover": #caso seja clicado no botão remover, será deletado o registro que contém o respectivo eleitor na respectiva eleição
-                print('remover')
+                #print('remover')
                 Eleicao_eleitor.objects.filter(eleicao__pk=pk, eleitor=aux.eleitor).delete() #encontrar o respectiva linha na tabela e depois deletar a mesma
 
 
@@ -105,9 +106,9 @@ def cadastro_eleicao_eleitores(request, pk): #  ligação entre as tabelas elei�
 
     eleicao_eleitores = Eleicao_eleitor.objects.filter(eleicao__pk=pk)
     context = { # variável utilizada para encaminhar as informações para a tela de cadastro
-        'form': form, 
-        'eleicao': eleicao,
-        'eleicao_eleitores': eleicao_eleitores,
+        'form': form, # informando o formulário para o gerenciamento de eleitores
+        'eleicao': eleicao, # passando as informações da eleição atual
+        'eleicao_eleitores': eleicao_eleitores, # passando a lista de eleitores
     } 
 
     return render(request, 'eleicoes/edEleitores.html', context)
