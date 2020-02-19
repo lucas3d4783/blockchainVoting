@@ -1,3 +1,4 @@
 
 venv/
 .vscode/
+aplicacao/aplicacao/db.sqlite3
