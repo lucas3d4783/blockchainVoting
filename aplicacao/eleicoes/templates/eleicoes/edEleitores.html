@@ -9,7 +9,16 @@
             <label for='id_eleicao'>Eleição: </label>{{form.eleicao}}
         </p>-->
         <p>
-            <label for='id_eleitor'>Eleitor: </label>{{form.eleitor}}
+            <label for='id_eleitor'>Eleitor: </label>
+            <!--{{form.eleitor}}-->
+            {% if eleitores %} <!-- Verifica se há uma lista de candidatos -->
+            <select name="eleitor" class="custom-select" maxlenght="50" id="id_eleitor">
+                {% for eleitor in eleitores %} <!-- percorre a lista de candidatos e vai inserindo eles em um campo select, indomando o id do candidato no campo value -->
+                    <option value="{{eleitor.pk}}">{{eleitor}} {{eleitor.sobrenome}}</option>
+                {% endfor %}
+                </select>
+            {% endif %}
+
         </p>
         <button type="submit" class="btn btn-outline-success btn-block" name="bt" value="adicionar">Adicionar</button>
         <button type="submit" class="btn btn-outline-danger btn-block" name="bt" value="remover">Remover</button>

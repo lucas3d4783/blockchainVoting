@@ -9,6 +9,7 @@
         <a method="POST" class="btn btn-light btn-block btn-outline-dark" href="{% url 'edicao' pk=user.pk %}"><div> <!--Depois deve ser inserido a pk na url para encaminhar para um usuário específico-->
             
             <h2> {{ user.nome }} {{ user.sobrenome }} </h2>
+            <!--{{ user.pk }}-->
             {% if user.foto %} <!--Teste para verificar se o usuário possui imagem no perfil-->
                 <img class="img-fluid" src="{{ user.foto.url }}" alt="Era pra aparecer uma imagem aqui!"  width="25%"><br>
                 <!--{{ user.foto.url }}<br>  Caminho da imagem-->
