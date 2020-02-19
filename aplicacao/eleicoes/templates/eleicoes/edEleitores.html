@@ -24,11 +24,12 @@
         <button type="submit" class="btn btn-outline-danger btn-block" name="bt" value="remover">Remover</button>
     </form>
 
-    <br>
+    <hr>
     <h2>Lista de Eleitores</h2>
+    
     {% for eleicao_eleitor in eleicao_eleitores %}
-        <hr>
-        <div class="">
+        
+        <div class="list-group-item">
             {% if eleicao_eleitor.eleitor.foto %} <!--Teste para verificar se o usuário possui imagem no perfil-->
                 <img class="img-fluid" src="{{ eleicao_eleitor.eleitor.foto.url }}" alt="Era pra aparecer uma imagem aqui!"  width="4%">
                 <!--{{ user.foto.url }}<br>  Caminho da imagem-->
@@ -37,5 +38,5 @@
         </div>
     {% endfor %}
 
-    <hr>
+    
 {% endblock %}
