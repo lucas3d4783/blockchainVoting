@@ -4,9 +4,14 @@ from .forms import CadastroForm, EdicaoForm, CadastroFormEleicao_candidatos, Cad
 from usuarios.models import Usuario
 
 def index(request): #quando for solicitado o url index, será encaminhado o index.html
-    return render(request, 'eleicoes/index.html')
+    title = 'Eleições' # Definir título da página
+    context = {
+        'title': title,
+    }
+    return render(request, 'eleicoes/index.html', context)
 
 def cadastro(request): #  Criação de eleições 
+    title = 'Cadastro de Eleições' # Definir título da página
     if request.method == 'POST': # se o formulário foi submetido
         form = CadastroForm(request.POST) # Criar o formulário
         if form.is_valid(): # se todos os campos forem inseridos corretamente
@@ -16,18 +21,25 @@ def cadastro(request): #  Criação de eleições
         form = CadastroForm()
     
     context = { # variável utilizada para encaminhar as informações para a tela de cadastro
-        'form': form
+        'form': form,
+        'title': title,
         }
     
     return render(request, 'eleicoes/cadastro.html', context)
 
 
 def consulta(request): # Listagem das eleições criadas
+    title = 'Consulta de Eleições' # Definir título da página
     eleicoes = Eleicao.objects.filter().order_by('nome') #buscar as eleições no banco e ordenar pelo nome
-    return render(request, 'eleicoes/consulta.html', {'eleicoes': eleicoes}) #chamar o template de consulta, passando a lista de eleições como parâmetro
+    context =  {
+        'eleicoes': eleicoes,
+        'title': title,
+        }
+    return render(request, 'eleicoes/consulta.html', context) #chamar o template de consulta, passando a lista de eleições como parâmetro
 
 
 def edicao(request, pk): # Edição de Eleições 
+    title = 'Edição de Eleições'
     eleicao = get_object_or_404(Eleicao, pk=pk)
     if request.method == "POST":
         if request.POST['bt'] == "salvar":
@@ -41,9 +53,15 @@ def edicao(request, pk): # Edição de Eleições
 
     else:
         form = EdicaoForm(instance=eleicao)
-    return render(request, 'eleicoes/edicao.html', {'form': form, 'eleicao': eleicao})
+    context = {
+        'form': form, 
+        'eleicao': eleicao,
+        'title': title,
+        }
+    return render(request, 'eleicoes/edicao.html', context)
 
 def cadastro_eleicao_candidatos(request, pk): #  ligação entre as tabelas eleições e seus respectivos candidatos
+    title = 'Gerência de Candidatos - Eleições'
     eleicao = get_object_or_404(Eleicao, pk=pk) # criando um objeto de eleicao para ser utilizado na tela de adição de candidatos
     eleicao_candidatos = Eleicao_candidato.objects.all() # buscando os objetos referentes aos candidatos da eleição objeto de candidatos para ser utilizado na tela de adição de candidatos
     existe=False
@@ -75,11 +93,13 @@ def cadastro_eleicao_candidatos(request, pk): #  ligação entre as tabelas elei
         'eleicao': eleicao, # passando as informações da eleição atual
         'eleicao_candidatos': eleicao_candidatos, # passando a lista de candidatos
         'candidatos': candidatos, # passando uma lista de candidatos para ser realizado a seleção de candidatos
+        'title': title,
     } 
     
     return render(request, 'eleicoes/edCandidatos.html', context)
 
 def cadastro_eleicao_eleitores(request, pk): #  ligação entre as tabelas eleições e seus respectivos candidatos
+    title = 'Gerência de Eleitores - Eleições'
     eleicao = get_object_or_404(Eleicao, pk=pk) # criando um objeto de eleicao para ser utilizado na tela de adição de candidatos
     eleicao_eleitores = Eleicao_eleitor.objects.all() # buscando os objetos referentes aos candidatos da eleição objeto de candidatos para ser utilizado na tela de adição de candidatos
     existe=False
@@ -115,6 +135,7 @@ def cadastro_eleicao_eleitores(request, pk): #  ligação entre as tabelas elei�
         'eleicao': eleicao, # passando as informações da eleição atual
         'eleicao_eleitores': eleicao_eleitores, # passando a lista de eleitores
         'eleitores': eleitores, # passando uma lista de eleitores para ser realizado a seleção de eleitores
+        'title': title,
     } 
 
     return render(request, 'eleicoes/edEleitores.html', context)

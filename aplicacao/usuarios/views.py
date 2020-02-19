@@ -13,9 +13,14 @@ from django.db import models
 
 
 def index(request): #quando for solicitado o url index, será encaminhado o index.html
-    return render(request, 'usuarios/index.html')
+    title = 'Usuários'
+    context = {
+        'title': title,
+    }
+    return render(request, 'usuarios/index.html', context)
 
 def cadastro(request): #  Criação de usuários 
+    title = 'Cadastro de Usuários'
     if request.method == 'POST': # se o formulário foi submetido
         form = CadastroForm(request.POST, request.FILES) # Criar o formulário
         if form.is_valid(): # se todos os campos forem inseridos corretamente
@@ -27,16 +32,23 @@ def cadastro(request): #  Criação de usuários
         form = CadastroForm()
     
     context = { # variável utilizada para encaminhar as informações para a tela de cadastro
-        'form': form
+        'form': form,
+        'title': title,
         } 
     
     return render(request, 'usuarios/cadastro.html', context)
 
 def consulta(request): # Listagem dos usuários criados
+    title = 'Consulta de Usuários'
     usuarios = Usuario.objects.filter().order_by('nome') #buscar os usuários no banco e ordenar pelo nome
-    return render(request, 'usuarios/consulta.html', {'usuarios': usuarios}) #chamar o template de consulta, passando a lista de usuários como parâmetro
+    context = {
+        'usuarios': usuarios,
+        'title': title,
+    }
+    return render(request, 'usuarios/consulta.html', context) #chamar o template de consulta, passando a lista de usuários como parâmetro
 
 def edicao(request, pk): # Edição de usuários 
+    title = 'Edição de Usuários'
     user = get_object_or_404(Usuario, pk=pk)
     if request.method == "POST":
         if request.POST['bt'] == "salvar":
@@ -55,9 +67,15 @@ def edicao(request, pk): # Edição de usuários
 
     else:
         form = EdicaoForm(instance=user)
-    return render(request, 'usuarios/edicao.html', {'form': form, 'user': user})
+        context = {
+            'form': form, 
+            'user': user,
+            'title': title,
+        }
+    return render(request, 'usuarios/edicao.html', context)
 
 def alterar_senha(request, pk): # Alteração de senha 
+    title = 'Alteração de Senha - Usuários'
     user = get_object_or_404(Usuario, pk=pk)
     form = AlterarSenhaForm(instance=user)
     
@@ -72,5 +90,9 @@ def alterar_senha(request, pk): # Alteração de senha
     else:
         usuario = form.save(commit=False) 
         form = AlterarSenhaForm(instance=user)
-
-    return render(request, 'usuarios/alterar_senha.html', {'form': form, 'user': user}) # enviando o objeto user para manipular no template -> mostrar o nome do usuário neste caso
+    context = {
+        'form': form, 
+        'user': user,
+        'title': title,
+    }
+    return render(request, 'usuarios/alterar_senha.html', context) # enviando o objeto user para manipular no template -> mostrar o nome do usuário neste caso
