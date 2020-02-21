@@ -13,6 +13,8 @@ from django.db import models
 
 
 def index(request): #quando for solicitado o url index, será encaminhado o index.html
+    if not request.session.get('logado'): # se não estiver logado
+        return redirect('login') # redireciona para a tela de login
     title = 'Usuários'
     context = {
         'title': title,
@@ -20,6 +22,8 @@ def index(request): #quando for solicitado o url index, será encaminhado o inde
     return render(request, 'usuarios/index.html', context)
 
 def cadastro(request): #  Criação de usuários 
+    if not request.session.get('logado'): # se não estiver logado
+        return redirect('login') # redireciona para a tela de login
     title = 'Cadastro de Usuários'
     if request.method == 'POST': # se o formulário foi submetido
         form = CadastroForm(request.POST, request.FILES) # Criar o formulário
@@ -39,6 +43,8 @@ def cadastro(request): #  Criação de usuários
     return render(request, 'usuarios/cadastro.html', context)
 
 def consulta(request): # Listagem dos usuários criados
+    if not request.session.get('logado'): # se não estiver logado
+        return redirect('login') # redireciona para a tela de login
     title = 'Consulta de Usuários'
     usuarios = Usuario.objects.filter().order_by('nome') #buscar os usuários no banco e ordenar pelo nome
     context = {
@@ -48,6 +54,8 @@ def consulta(request): # Listagem dos usuários criados
     return render(request, 'usuarios/consulta.html', context) #chamar o template de consulta, passando a lista de usuários como parâmetro
 
 def edicao(request, pk): # Edição de usuários 
+    if not request.session.get('logado'): # se não estiver logado
+        return redirect('login') # redireciona para a tela de login
     title = 'Edição de Usuários'
     user = get_object_or_404(Usuario, pk=pk)
     if request.method == "POST":
@@ -75,6 +83,8 @@ def edicao(request, pk): # Edição de usuários
     return render(request, 'usuarios/edicao.html', context)
 
 def alterar_senha(request, pk): # Alteração de senha 
+    if not request.session.get('logado'): # se não estiver logado
+        return redirect('login') # redireciona para a tela de login
     title = 'Alteração de Senha - Usuários'
     user = get_object_or_404(Usuario, pk=pk)
     form = AlterarSenhaForm(instance=user)

@@ -4,6 +4,8 @@ from .forms import CadastroForm, EdicaoForm, CadastroFormEleicao_candidatos, Cad
 from usuarios.models import Usuario
 
 def index(request): #quando for solicitado o url index, será encaminhado o index.html
+    if not request.session.get('logado'): # se não estiver logado
+        return redirect('login') # redireciona para a tela de login
     title = 'Eleições' # Definir título da página
     context = {
         'title': title,
@@ -11,6 +13,8 @@ def index(request): #quando for solicitado o url index, será encaminhado o inde
     return render(request, 'eleicoes/index.html', context)
 
 def cadastro(request): #  Criação de eleições 
+    if not request.session.get('logado'): # se não estiver logado
+        return redirect('login') # redireciona para a tela de login
     title = 'Cadastro de Eleições' # Definir título da página
     if request.method == 'POST': # se o formulário foi submetido
         form = CadastroForm(request.POST) # Criar o formulário
@@ -29,6 +33,8 @@ def cadastro(request): #  Criação de eleições
 
 
 def consulta(request): # Listagem das eleições criadas
+    if not request.session.get('logado'): # se não estiver logado
+        return redirect('login') # redireciona para a tela de login
     title = 'Consulta de Eleições' # Definir título da página
     eleicoes = Eleicao.objects.filter().order_by('nome') #buscar as eleições no banco e ordenar pelo nome
     context =  {
@@ -39,6 +45,8 @@ def consulta(request): # Listagem das eleições criadas
 
 
 def edicao(request, pk): # Edição de Eleições 
+    if not request.session.get('logado'): # se não estiver logado
+        return redirect('login') # redireciona para a tela de login
     title = 'Edição de Eleições'
     eleicao = get_object_or_404(Eleicao, pk=pk)
     if request.method == "POST":
@@ -61,6 +69,8 @@ def edicao(request, pk): # Edição de Eleições
     return render(request, 'eleicoes/edicao.html', context)
 
 def cadastro_eleicao_candidatos(request, pk): #  ligação entre as tabelas eleições e seus respectivos candidatos
+    if not request.session.get('logado'): # se não estiver logado
+        return redirect('login') # redireciona para a tela de login
     title = 'Gerência de Candidatos - Eleições'
     eleicao = get_object_or_404(Eleicao, pk=pk) # criando um objeto de eleicao para ser utilizado na tela de adição de candidatos
     eleicao_candidatos = Eleicao_candidato.objects.all() # buscando os objetos referentes aos candidatos da eleição objeto de candidatos para ser utilizado na tela de adição de candidatos
@@ -99,6 +109,8 @@ def cadastro_eleicao_candidatos(request, pk): #  ligação entre as tabelas elei
     return render(request, 'eleicoes/edCandidatos.html', context)
 
 def cadastro_eleicao_eleitores(request, pk): #  ligação entre as tabelas eleições e seus respectivos candidatos
+    if not request.session.get('logado'): # se não estiver logado
+        return redirect('login') # redireciona para a tela de login
     title = 'Gerência de Eleitores - Eleições'
     eleicao = get_object_or_404(Eleicao, pk=pk) # criando um objeto de eleicao para ser utilizado na tela de adição de candidatos
     eleicao_eleitores = Eleicao_eleitor.objects.all() # buscando os objetos referentes aos candidatos da eleição objeto de candidatos para ser utilizado na tela de adição de candidatos

@@ -5,6 +5,8 @@ from cursos.models import Curso
 # Create your views here.
 
 def index(request): #quando for solicitado o url index, será encaminhado o index.html
+    if not request.session.get('logado'): # se não estiver logado
+        return redirect('login') # redireciona para a tela de login
     title = 'Cursos'
     context = {
         'title': title,
@@ -12,7 +14,10 @@ def index(request): #quando for solicitado o url index, será encaminhado o inde
     return render(request, 'cursos/index.html', context)
 
 
+
 def cadastro(request): #  Criação de cursos
+    if not request.session.get('logado'): # se não estiver logado
+        return redirect('login') # redireciona para a tela de login
     title = 'Cadastro de Cursos'
     form = CadastroForm(request.POST or None) # o formulário pode estar vázio ou não, se estiver apenas carregando o formulário
     context = {
@@ -26,7 +31,10 @@ def cadastro(request): #  Criação de cursos
             return redirect('consulta_cursos')
     return render(request, 'cursos/cadastro.html', context)
 
+
 def consulta(request): # Listagem dos cursos criados
+    if not request.session.get('logado'): # se não estiver logado
+        return redirect('login') # redireciona para a tela de login
     title = 'Consulta de Cursos'
     cursos = Curso.objects.filter().order_by('nome') #buscar os cursos no banco e ordenar pelo nome
     context =  {
@@ -36,6 +44,8 @@ def consulta(request): # Listagem dos cursos criados
     return render(request, 'cursos/consulta.html', context) #chamar o template de consulta, passando a lista de cursos como parâmetro
 
 def edicao(request, pk): # Edição de cursos 
+    if not request.session.get('logado'): # se não estiver logado
+        return redirect('login') # redireciona para a tela de login
     title = 'Edição de Cursos'
     curso = get_object_or_404(Curso, pk=pk)
     form = EdicaoForm(instance=curso)
