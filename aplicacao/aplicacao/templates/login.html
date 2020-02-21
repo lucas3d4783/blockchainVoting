@@ -41,8 +41,8 @@
                     <hr>
 
                     <form method="POST">{% csrf_token %}
-                        <input type="text" name="usuario" placeholder="Usuário"/>
-                        <input type="password" name="senha" placeholder="Senha"/>
+                        <input type="text" name="usuario" placeholder="Usuário" required="O campo usuário deve ser preenchido"/>
+                        <input type="password" name="senha" placeholder="Senha" required="O campo senha deve ser preenchido"/>
                         <button type="submit" class="btn btn-success btn-block btn-lg">Entrar</button>
                         <p class="message">Não possui uma conta? <a href="#">Criar uma Conta</a></p>
                     </form>
