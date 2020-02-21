@@ -6535,7 +6535,12 @@ button.bg-secondary:focus {
 }
 
 .bg-success {
-  background-color: #28a745 !important;
+  background-color: #63d471;
+  background: -webkit-linear-gradient(right, #63d471, #233329 );
+  background: -moz-linear-gradient(right, #63d471, #233329);
+  background: -o-linear-gradient(right, #63d471, #233329);
+  background: linear-gradient(to left, #63d471, #233329);
+
 }
 
 a.bg-success:hover, a.bg-success:focus,

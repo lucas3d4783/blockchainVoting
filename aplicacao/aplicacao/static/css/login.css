@@ -47,12 +47,12 @@
 
 
 body {
-  background: #76b852; /* fallback for old browsers */
-  background: -webkit-linear-gradient(right, #76b852, #8DC26F);
-  background: -moz-linear-gradient(right, #76b852, #8DC26F);
-  background: -o-linear-gradient(right, #76b852, #8DC26F);
-  background: linear-gradient(to left, #76b852, #8DC26F);
+  background-color: #63d471;
+  background: -webkit-linear-gradient(right, #63d471, #233329 );
+  background: -moz-linear-gradient(right, #63d471, #233329);
+  background: -o-linear-gradient(right, #63d471, #233329);
+  background: linear-gradient(to left, #63d471, #233329);
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;      
+  -moz-osx-font-smoothing: grayscale;     
 }
 
