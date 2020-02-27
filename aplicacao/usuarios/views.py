@@ -22,8 +22,8 @@ def index(request): #quando for solicitado o url index, será encaminhado o inde
     return render(request, 'usuarios/index.html', context)
 
 def cadastro(request): #  Criação de usuários 
-    if not request.session.get('logado'): # se não estiver logado
-        return redirect('login') # redireciona para a tela de login
+    #if not request.session.get('logado'): # se não estiver logado
+    #    return redirect('login') # redireciona para a tela de login
     title = 'Cadastro de Usuários'
     if request.method == 'POST': # se o formulário foi submetido
         form = CadastroForm(request.POST, request.FILES) # Criar o formulário
