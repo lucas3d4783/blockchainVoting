@@ -23,20 +23,20 @@
         <button type="submit" class="btn btn-outline-success btn-block" name="bt" value="adicionar">Adicionar</button>
         <button type="submit" class="btn btn-outline-danger btn-block" name="bt" value="remover">Remover</button>
     </form>
-
-    <hr>
-    <h2>Lista de Eleitores</h2>
-    
-    {% for eleicao_eleitor in eleicao_eleitores %}
-        
-        <div class="list-group-item">
-            {% if eleicao_eleitor.eleitor.foto %} <!--Teste para verificar se o usuário possui imagem no perfil-->
-                <img class="img-fluid" src="{{ eleicao_eleitor.eleitor.foto.url }}" alt="Era pra aparecer uma imagem aqui!"  width="4%">
-                <!--{{ user.foto.url }}<br>  Caminho da imagem-->
-            {% endif %} 
-            {{eleicao_eleitor.eleitor}} {{eleicao_eleitor.eleitor.sobrenome}}
-        </div>
-    {% endfor %}
+    {% if eleicao_eleitores %}
+        <hr>
+        <h2>Lista de Eleitores</h2>
+        {% for eleicao_eleitor in eleicao_eleitores %}
+            
+            <div class="list-group-item">
+                {% if eleicao_eleitor.eleitor.foto %} <!--Teste para verificar se o usuário possui imagem no perfil-->
+                    <img class="img-fluid" src="{{ eleicao_eleitor.eleitor.foto.url }}" alt="Era pra aparecer uma imagem aqui!"  width="4%">
+                    <!--{{ user.foto.url }}<br>  Caminho da imagem-->
+                {% endif %} 
+                {{eleicao_eleitor.eleitor}} {{eleicao_eleitor.eleitor.sobrenome}}
+            </div>
+        {% endfor %}
+    {% endif %}
     {% else %} <!-- Caso não tenha sido cadastrado nenhum usuário do tipo Eleitor -->
         <h2>Nenhum eleitor cadastrado!</h2>
         <div align="center">
