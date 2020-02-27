@@ -25,7 +25,7 @@ SECRET_KEY = 'bd0ts-6nw%k9a(i-6r@=b@4)*+6)k!13-@m2$nlrb+us6=+i%)'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-externo = '172.16.59.193'
+externo = '172.17.11.144'
 
 ALLOWED_HOSTS = [externo, '127.0.0.1']
 
@@ -52,9 +52,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'usuarios',
-    'cursos',
-    'eleicoes',
+    'usuarios', # CRUD de usuários
+    'cursos', # CRUD de cursos 
+    'eleicoes', # CRUD de eleições, além da gerência de candidatos e eleitores de uma respectiva eleição 
+    'eleitor', # app onde o eleitor poderá escolher seus candidatos, verificar as eleições que ele faz parte, gerenciar suas informações (chaves, etc.)
 ]
 
 MIDDLEWARE = [

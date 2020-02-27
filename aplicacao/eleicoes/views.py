@@ -151,3 +151,4 @@ def cadastro_eleicao_eleitores(request, pk): #  ligação entre as tabelas elei�
     } 
 
     return render(request, 'eleicoes/edEleitores.html', context)
+

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% for eleicao_eleitor in eleicoes_eleitor %}        
+            
+        <a method="POST" class="btn btn-light btn-block btn-outline-dark" href="{% url 'votacao' pk=eleicao_eleitor.eleicao.pk %}"><div> 
+            <!-- pk na url para encaminhar para uma eleição específica -->
+            <h2> {{ eleicao_eleitor.eleicao.nome }} </h2>
+        </div></a>
+
+    {% endfor %}
+{% endblock %}
