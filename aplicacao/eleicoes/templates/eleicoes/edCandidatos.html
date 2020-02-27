@@ -3,41 +3,48 @@
 
 {% block content %}
     <h1>{{eleicao.nome}}</h1>
-
-    <form method="POST" class="post-form">{% csrf_token %}
-        <!--<p>
-            <label for='id_eleicao'>Eleição: </label>{{form.eleicao}}
-        </p>-->
-        <p>
-            <label for='id_candidato'>Candidato: </label>
-            <!--{{form.candidato}}-->
-            {% if candidatos %} <!-- Verifica se há uma lista de candidatos -->
-            <select name="candidato" class="custom-select" maxlenght="50" id="id_candidato">
-                {% for candidato in candidatos %} <!-- percorre a lista de candidatos e vai inserindo eles em um campo select, indomando o id do candidato no campo value -->
-                    <option value="{{candidato.pk}}">{{candidato}} {{candidato.sobrenome}}</option>
-                {% endfor %}
+    {% if candidatos %} <!-- Verifica se há uma lista de candidatos -->
+        <form method="POST" class="post-form">{% csrf_token %}
+            <!--<p>
+                <label for='id_eleicao'>Eleição: </label>{{form.eleicao}}
+            </p>-->
+            <p>
+                
+                <label for='id_candidato'>Candidato: </label>
+                <!--{{form.candidato}}-->
+            
+                <select name="candidato" class="custom-select" maxlenght="50" id="id_candidato">
+                    {% for candidato in candidatos %} <!-- percorre a lista de candidatos e vai inserindo eles em um campo select, indomando o id do candidato no campo value -->
+                        <option value="{{candidato.pk}}">{{candidato}} {{candidato.sobrenome}}</option>
+                    {% endfor %}
                 </select>
-            {% endif %}
+                
 
-            <!-- else -> deve ser cadastrado um usuário!!! -->
-           
-        </p>
-        <button type="submit" class="btn btn-outline-success btn-block" name="bt" value="adicionar">Adicionar</button>
-        <button type="submit" class="btn btn-outline-danger btn-block" name="bt" value="remover">Remover</button>
-    </form>
-
-    <hr>
-    <h2>Lista de Candidatos</h2>
-
-    {% for eleicao_candidato in eleicao_candidatos %}
-        <div class="list-group-item">
-            {% if eleicao_candidato.candidato.foto %} <!--Teste para verificar se o usuário possui imagem no perfil-->
-                <img class="img-fluid" src="{{ eleicao_candidato.candidato.foto.url }}" alt="Era pra aparecer uma imagem aqui!"  width="4%">
-                <!--{{ user.foto.url }}<br>  Caminho da imagem-->
-            {% endif %} 
-            {{eleicao_candidato.candidato}} {{eleicao_candidato.candidato.sobrenome}}
+                <!-- else -> deve ser cadastrado um usuário!!! -->
+            
+            </p>
+            <button type="submit" class="btn btn-outline-success btn-block" name="bt" value="adicionar">Adicionar</button>
+            <button type="submit" class="btn btn-outline-danger btn-block" name="bt" value="remover">Remover</button>
+        </form>
+        {% if eleicao_candidatos %}
+            <hr>
+            <h2>Lista de Candidatos</h2>
+            {% for eleicao_candidato in eleicao_candidatos %}
+                <div class="list-group-item">
+                    {% if eleicao_candidato.candidato.foto %} <!--Teste para verificar se o usuário possui imagem no perfil-->
+                        <img class="img-fluid" src="{{ eleicao_candidato.candidato.foto.url }}" alt="Era pra aparecer uma imagem aqui!"  width="4%">
+                        <!--{{ user.foto.url }}<br>  Caminho da imagem-->
+                    {% endif %} 
+                    {{eleicao_candidato.candidato}} {{eleicao_candidato.candidato.sobrenome}}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% else %} <!-- Caso não tenha sido cadastrado nenhum usuário do tipo Candidato -->
+        <h2>Nenhum candidato cadastrado!</h2>
+        <div align="center">
+            <img src="{% static 'media/gifs/john.gif' %}" class="img-fluid" width="40%"/>
         </div>
-    {% endfor %}
-
+        <br>
+    {% endif %}
 
 {% endblock %}
