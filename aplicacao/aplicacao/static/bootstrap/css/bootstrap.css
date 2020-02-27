@@ -46,17 +46,6 @@
   background-color: #0000000e;
 }
 
-/*************************************************/
-
-[type="file"] {
-  /*display: none;*/
-}
-
-/*************************************************/
-
-
-
-
 
 html {
   font-family: sans-serif;
@@ -88,6 +77,7 @@ hr {
   box-sizing: content-box;
   height: 0;
   overflow: visible;
+  background-color: rgba(41, 41, 41, 0.4);
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -6545,7 +6535,12 @@ button.bg-secondary:focus {
 }
 
 .bg-success {
-  background-color: #28a745 !important;
+  background-color: #63d471;
+  background: -webkit-linear-gradient(right, #63d471, #233329 );
+  background: -moz-linear-gradient(right, #63d471, #233329);
+  background: -o-linear-gradient(right, #63d471, #233329);
+  background: linear-gradient(to left, #63d471, #233329);
+
 }
 
 a.bg-success:hover, a.bg-success:focus,
