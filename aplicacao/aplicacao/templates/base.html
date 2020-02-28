@@ -48,6 +48,12 @@
   </nav>
 
   <header class="bg-success text-white">
+    {% if user_pk and user_name %}
+        <a method="POST" href="{% url 'edicao' pk=user_pk %}"><div class="btn btn-outline-success ">
+          <img class="img-fluid" src="{{ user_foto }}" alt="Foto do perfil"  width="6%">
+          {{user_name}}
+        </div></a>
+    {% endif %}
     <div class="container text-center">
       <img class="img-fluid" src="{% static 'media/icons/blockchain-dark.svg' %}" alt="Era pra aparecer uma imagem aqui!"  width="12%"><br>
       <h1>Sistema de Votação</h1>

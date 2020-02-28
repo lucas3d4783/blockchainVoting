@@ -15,6 +15,12 @@ from django.db import models
 def index(request): #quando for solicitado o url index, será encaminhado o index.html
     if not request.session.get('logado'): # se não estiver logado
         return redirect('login') # redireciona para a tela de login
+    if request.session.get('user_tipo') != 'Administrador': # se não for administrador
+        erro = "Apenas administradores do sistema podem realizar manipulações deste tipo!"
+        context = {
+            'erro': erro,
+        }
+        return render(request, 'usuarios/index.html', context) # mensagem de erro
     title = 'Usuários'
     context = {
         'title': title,
@@ -22,8 +28,15 @@ def index(request): #quando for solicitado o url index, será encaminhado o inde
     return render(request, 'usuarios/index.html', context)
 
 def cadastro(request): #  Criação de usuários 
-    #if not request.session.get('logado'): # se não estiver logado
-    #    return redirect('login') # redireciona para a tela de login
+    if not request.session.get('logado'): # se não estiver logado
+        return redirect('login') # redireciona para a tela de login
+    if request.session.get('user_tipo') != 'Administrador': # se não for administrador
+        erro = "Apenas administradores do sistema podem realizar manipulações deste tipo!"
+        context = {
+            'erro': erro,
+        }
+        return render(request, 'usuarios/cadastro.html', context) # mensagem de erro
+    
     title = 'Cadastro de Usuários'
     if request.method == 'POST': # se o formulário foi submetido
         form = CadastroForm(request.POST, request.FILES) # Criar o formulário
@@ -45,6 +58,12 @@ def cadastro(request): #  Criação de usuários
 def consulta(request): # Listagem dos usuários criados
     if not request.session.get('logado'): # se não estiver logado
         return redirect('login') # redireciona para a tela de login
+    if request.session.get('user_tipo') != 'Administrador': # se não for administrador
+        erro = "Apenas administradores do sistema podem realizar manipulações deste tipo!"
+        context = {
+            'erro': erro,
+        }
+        return render(request, 'usuarios/consulta.html', context) # mensagem de erro
     title = 'Consulta de Usuários'
     usuarios = Usuario.objects.filter().order_by('nome') #buscar os usuários no banco e ordenar pelo nome
     context = {
@@ -56,6 +75,15 @@ def consulta(request): # Listagem dos usuários criados
 def edicao(request, pk): # Edição de usuários 
     if not request.session.get('logado'): # se não estiver logado
         return redirect('login') # redireciona para a tela de login
+    if request.session.get('user_tipo') != 'Administrador': # se não for administrador
+        erro = "Apenas administradores do sistema podem realizar manipulações deste tipo!"
+        user_pk = request.session.get('user_pk')
+        context = {
+            'erro': erro,
+            'user_pk': user_pk,
+        }
+        return render(request, 'usuarios/edicao.html', context) # mensagem de erro
+
     title = 'Edição de Usuários'
     user = get_object_or_404(Usuario, pk=pk)
     if request.method == "POST":
@@ -85,6 +113,15 @@ def edicao(request, pk): # Edição de usuários
 def alterar_senha(request, pk): # Alteração de senha 
     if not request.session.get('logado'): # se não estiver logado
         return redirect('login') # redireciona para a tela de login
+    if request.session.get('user_pk') != int(pk): # se o identificador do usuário que ele estiver tentando alterar for diferente do dele
+        #print(request.session.get('user_pk'))
+        #print(pk)
+        erro = "Apenas administradores do sistema podem realizar manipulações deste tipo!"
+        context = {
+            'erro': erro,
+        }
+        return render(request, 'usuarios/alterar_senha.html', context) # mensagem de erro
+
     title = 'Alteração de Senha - Usuários'
     user = get_object_or_404(Usuario, pk=pk)
     form = AlterarSenhaForm(instance=user)

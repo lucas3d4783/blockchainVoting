@@ -2,24 +2,30 @@
 {% load static %}
 
 {% block content %}
-    {% for user in usuarios %}
-        <!--<img src="{% static "media/img.jpg" %}" alt="My image">--> <!-- Teste de inserção de imagem estática-->
-        
-        
-        <a method="POST" class="btn btn-light btn-block btn-outline-dark" href="{% url 'edicao' pk=user.pk %}"><div> <!--Depois deve ser inserido a pk na url para encaminhar para um usuário específico-->
+    {% if erro %}
+        <div class="alert alert-danger" role="alert">
+            {{ erro }}
+        </div>  
+    {% else %}
+        {% for user in usuarios %}
+            <!--<img src="{% static "media/img.jpg" %}" alt="My image">--> <!-- Teste de inserção de imagem estática-->
             
-            <h2> {{ user.nome }} {{ user.sobrenome }} </h2>
-            <!--{{ user.pk }}-->
-            {% if user.foto %} <!--Teste para verificar se o usuário possui imagem no perfil-->
-                <img class="img-fluid" src="{{ user.foto.url }}" alt="Era pra aparecer uma imagem aqui!"  width="25%"><br>
-                <!--{{ user.foto.url }}<br>  Caminho da imagem-->
-            {% endif %}
-            <p><b>Curso:</b> {{ user.curso}}</p>
-            <p><b>Usuário:</b> {{ user.usuario}}</p>
-            <p><b>E-mail:</b> {{ user.email}}</p>
-            <p><b>Tipo:</b> {{user.tipo}}</p> 
-            <!--<p><b>Senha:</b> {{ user.senha }}</p>-->
             
-        </div></a>
-    {% endfor %}
+            <a method="POST" class="btn btn-light btn-block btn-outline-dark" href="{% url 'edicao' pk=user.pk %}"><div> <!--Depois deve ser inserido a pk na url para encaminhar para um usuário específico-->
+                
+                <h2> {{ user.nome }} {{ user.sobrenome }} </h2>
+                <!--{{ user.pk }}-->
+                {% if user.foto %} <!--Teste para verificar se o usuário possui imagem no perfil-->
+                    <img class="img-fluid" src="{{ user.foto.url }}" alt="Era pra aparecer uma imagem aqui!"  width="25%"><br>
+                    <!--{{ user.foto.url }}<br>  Caminho da imagem-->
+                {% endif %}
+                <p><b>Curso:</b> {{ user.curso}}</p>
+                <p><b>Usuário:</b> {{ user.usuario}}</p>
+                <p><b>E-mail:</b> {{ user.email}}</p>
+                <p><b>Tipo:</b> {{user.tipo}}</p> 
+                <!--<p><b>Senha:</b> {{ user.senha }}</p>-->
+                
+            </div></a>
+        {% endfor %}
+    {% endif %}
 {% endblock %}

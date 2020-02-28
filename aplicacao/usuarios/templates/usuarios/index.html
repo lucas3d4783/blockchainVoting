@@ -1,6 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <a  href="{% url 'cadastro' %}" class="btn btn-outline-success btn-block btn-lg">Cadastro</a>
-    <a  href="{% url 'consulta' %}" class="btn btn-outline-success btn-block btn-lg">Consulta</a>
+    {% if erro %}
+        <div class="alert alert-danger" role="alert">
+            {{ erro }}
+        </div>  
+    {% else %}
+        <a  href="{% url 'cadastro' %}" class="btn btn-outline-success btn-block btn-lg">Cadastro</a>
+        <a  href="{% url 'consulta' %}" class="btn btn-outline-success btn-block btn-lg">Consulta</a>
+    {% endif %}
 {% endblock %}

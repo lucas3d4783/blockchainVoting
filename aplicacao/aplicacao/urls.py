@@ -27,9 +27,10 @@ urlpatterns = [
     path('login', views.login, name='login'),
     path('logout', views.logout, name='logout'),
     path('admin/', admin.site.urls),
-    path('usuarios/', include('usuarios.urls')),
-    path('cursos/', include('cursos.urls')),
-    path('eleicoes/', include('eleicoes.urls'))
+    path('usuarios/', include('usuarios.urls')), # incluindos as urls de usuários
+    path('cursos/', include('cursos.urls')), # incluindos as urls de cursos
+    path('eleicoes/', include('eleicoes.urls')), # incluindos as urls de eleicoes
+    path('eleitor/', include('eleitor.urls')), # incluindos as urls de eleitor
    
 ]
 

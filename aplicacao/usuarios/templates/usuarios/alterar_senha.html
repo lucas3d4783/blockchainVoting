@@ -1,13 +1,18 @@
 {% extends "base.html" %}
     
 {% block content %}
+    {% if erro %}
+        <div class="alert alert-danger" role="alert">
+            {{ erro }}
+        </div>  
+    {% else %}
+        <h2>Alterar senha ({{user.nome}} {{user.sobrenome}})</h2>
 
-    <h2>Alterar senha ({{user.nome}} {{user.sobrenome}})</h2>
-
-    <form method="POST" class="post-form">{% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-outline-success btn-block" name="bt" value="salvar">Salvar</button>
-    
-    </form>
+        <form method="POST" class="post-form">{% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-outline-success btn-block" name="bt" value="salvar">Salvar</button>
+        
+        </form>
+    {% endif %}
 
 {% endblock %}

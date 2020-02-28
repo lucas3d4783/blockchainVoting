@@ -11,7 +11,15 @@ def index(request): #quando for solicitado o url index, será encaminhado o inde
         if not request.session.get('logado'): # se não estiver logado
             #print(request.session.get('user'))
             return redirect('login')
-        return render(request, 'index.html')
+        user_pk = request.session.get('user_pk')
+        user_name = request.session.get('user_name')
+        user_foto = request.session.get('user_foto')
+        context = {
+            'user_pk': user_pk,
+            'user_name': user_name,
+            'user_foto': user_foto,
+        }
+        return render(request, 'index.html', context)
         
     #except:
     #    return redirect(request, 'login')
@@ -48,8 +56,10 @@ def login(request):
             u = Usuario.objects.get(usuario=request.POST['usuario']) # tenta encontrar o usuário no banco
             senha = hashlib.sha256(request.POST['senha'].encode('utf-8')).hexdigest()# gerar o hash da senha informada 
             if u.senha == senha: # compara com o hash armazenado no banco
-                request.session['user'] = u.nome + " " + u.sobrenome # armazenar o nome do usuário
+                request.session['user_name'] = u.nome + " " + u.sobrenome # armazenar o nome do usuário
+                request.session['user_foto'] = u.foto.url # armazenar o caminho da foto de perfil do usuário
                 request.session['user_pk'] = u.pk
+                request.session['user_tipo'] = u.tipo
                 request.session['logado'] = True
                 return redirect('index') # redireciona para a página inicial
             else: # caso a senha não esja errada 

@@ -1,5 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <a  href="{% url 'consulta_eleitor' %}" class="btn btn-outline-success btn-block btn-lg">Consulte seus processos eleitorais</a>
+    {% if erro %}
+        <div class="alert alert-danger" role="alert">
+            {{ erro }}
+        </div>  
+    {% else %}
+        <a  href="{% url 'consulta_eleitor' %}" class="btn btn-outline-success btn-block btn-lg">Consulte seus processos eleitorais</a>
+    {%endif%}
 {% endblock %}

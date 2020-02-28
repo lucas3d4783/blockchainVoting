@@ -2,40 +2,47 @@
 {% load static %}
 
 {% block content %}
-    <h2>Cadastro de Usuários</h2>
-    <form method="POST" class="post-form" enctype="multipart/form-data">{% csrf_token %}
-         <!--{% csrf_token %}  adiciona uma camada de segurança no formulário-->
-        
-        <!--<input type="file" name="foto" accept="image/*" required="" id="id_foto">-->
-        <p>
-            <!--<img class="img-fluid" src="{% static 'media/icons-input-img/camera.png' %}"> --><label for="id_foto">Imagem do Perfil: </label> 
-            <br>
-            {{form.foto}}
-        </p>
-        
-        <p>
-            <label for='id_tipo'>Tipo: </label>{{form.tipo}}
-        </p>
-        <p>
-            <label for='id_curso'>Curso: </label>{{form.curso}}
-        </p>
-        <p>
-            <label for='id_nome'>Nome: </label>{{form.nome}}
-        </p>
-        <p>
-            <label for='id_sobrenome'>Sobrenome: </label>{{form.sobrenome}}
-        </p>
-        <p>
-            <label for='id_usuario'>Usuário: </label>{{form.usuario}}
-        </p>
-        <p>
-            <label for='id_email'>E-mail: </label>{{form.email}}
-        </p>
-        <p>
-            <label for='id_senha'>Senha: </label>{{form.senha}}
-        </p>
+    {% if erro %}
+        <div class="alert alert-danger" role="alert">
+            {{ erro }}
+        </div>  
+    {% else %}
+        <h2>Cadastro de Usuários</h2>
+        <form method="POST" class="post-form" enctype="multipart/form-data">{% csrf_token %}
+            <!--{% csrf_token %}  adiciona uma camada de segurança no formulário-->
+            
+            <!--<input type="file" name="foto" accept="image/*" required="" id="id_foto">-->
+            <p>
+                <!--<img class="img-fluid" src="{% static 'media/icons-input-img/camera.png' %}"> --><label for="id_foto">Imagem do Perfil: </label> 
+                <br>
+                {{form.foto}}
+            </p>
+            
+            <p>
+                <label for='id_tipo'>Tipo: </label>{{form.tipo}}
+            </p>
+            <p>
+                <label for='id_curso'>Curso: </label>{{form.curso}}
+            </p>
+            <p>
+                <label for='id_nome'>Nome: </label>{{form.nome}}
+            </p>
+            <p>
+                <label for='id_sobrenome'>Sobrenome: </label>{{form.sobrenome}}
+            </p>
+            <p>
+                <label for='id_usuario'>Usuário: </label>{{form.usuario}}
+            </p>
+            <p>
+                <label for='id_email'>E-mail: </label>{{form.email}}
+            </p>
+            <p>
+                <label for='id_senha'>Senha: </label>{{form.senha}}
+            </p>
 
-        <button type="submit" class="btn btn-outline-success btn-block">Cadastrar</button>
-    </form>
+            <button type="submit" class="btn btn-outline-success btn-block">Cadastrar</button>
+        </form>
+
+    {% endif %}
 
 {% endblock %}
