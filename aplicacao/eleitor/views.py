@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from eleicoes.models import Eleicao, Eleicao_eleitor
+from eleicoes.models import Eleicao, Eleicao_eleitor, Eleicao_candidato
 from usuarios.models import Usuario
 
 def index(request): #quando for solicitado o url index, será encaminhado o index.html
@@ -39,7 +39,15 @@ def votacao(request, pk): # Realização do voto
     if not request.session.get('logado'): # se não estiver logado
         return redirect('login') # redireciona para a tela de login
     
-    return render(request, 'eleitor/votacao.html') 
+    eleicao = get_object_or_404(Eleicao, pk=pk)
+    candidatos = Eleicao_candidato.objects.filter(eleicao__pk=pk)
+
+    context = {
+        'candidatos': candidatos,
+        'eleicao': eleicao,
+    }
+
+    return render(request, 'eleitor/votacao.html', context) 
     # deve ser direcionado para uma página para selecionar o respectivo candidato da respectiva eleição
 
     

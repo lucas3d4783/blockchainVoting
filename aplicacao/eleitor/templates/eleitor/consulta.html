@@ -5,15 +5,16 @@
         <div class="alert alert-danger" role="alert">
             {{ erro }}
         </div>  
+    {% else %}
+        <div class="text-center">
+            <h2>Eleições</h2><hr>
+            {% for eleicao_eleitor in eleicoes_eleitor %}        
+                    <a style="max-width: 350px; width: 350px; margin-top: 1.5%; margin-left: 1.5%;" method="POST" class="btn btn-light btn-outline-dark" href="{% url 'votacao' pk=eleicao_eleitor.eleicao.pk %}"><p><div> 
+                        <!-- pk na url para encaminhar para uma eleição específica -->
+                        {{ eleicao_eleitor.eleicao.nome }}
+                    </div></p></a>
+            {% endfor %}
+        </div>
+        <br>
     {%endif%}
-    
-    {% for eleicao_eleitor in eleicoes_eleitor %}        
-        
-            <a method="POST" class="btn btn-light btn-outline-dark" href="{% url 'votacao' pk=eleicao_eleitor.eleicao.pk %}"><div> 
-                <!-- pk na url para encaminhar para uma eleição específica -->
-                {{ eleicao_eleitor.eleicao.nome }}
-            </div></a>
-
-    {% endfor %}
-    <br>
 {% endblock %}

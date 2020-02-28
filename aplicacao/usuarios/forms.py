@@ -53,8 +53,8 @@ class AlterarSenhaForm(forms.ModelForm):
         model = Usuario #definindo o modelo como Usuario 
         fields = ('senha', 'senha') # selecionando os campos do modelo que serão utilizados
         widgets = { #estilizando os campos com css e definindo o campo senha como sendo de senha
-            'senha': forms.PasswordInput(attrs={'class': 'form-control', 'maxlenght': 50}),
-            'senha': forms.PasswordInput(attrs={'class': 'form-control', 'maxlenght': 50}),
+            'senha': forms.PasswordInput(attrs={'class': 'form-control', 'maxlenght': 50, 'placeholder': 'Digite a senha'}),
+            'senha': forms.PasswordInput(attrs={'class': 'form-control', 'maxlenght': 50, 'placeholder': 'Digite a senha'}),
             
             
         }

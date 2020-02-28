@@ -7,22 +7,18 @@ from django.core.exceptions import ObjectDoesNotExist
 
 
 def index(request): #quando for solicitado o url index, será encaminhado o index.html
-    #try:
-        if not request.session.get('logado'): # se não estiver logado
-            #print(request.session.get('user'))
-            return redirect('login')
-        user_pk = request.session.get('user_pk')
-        user_name = request.session.get('user_name')
-        user_foto = request.session.get('user_foto')
-        context = {
-            'user_pk': user_pk,
-            'user_name': user_name,
-            'user_foto': user_foto,
-        }
-        return render(request, 'index.html', context)
-        
-    #except:
-    #    return redirect(request, 'login')
+    if not request.session.get('logado'): # se não estiver logado
+        return redirect('login')
+    user_pk = request.session.get('user_pk')
+    user_name = request.session.get('user_name')
+    user_foto = request.session.get('user_foto')
+    context = {
+        'user_pk': user_pk,
+        'user_name': user_name,
+        'user_foto': user_foto,
+    }
+    return render(request, 'index.html', context)
+
 
 def contato(request): #quando for solicitado o url contato, será encaminhado o index.html
     if not request.session.get('logado'): # se não estiver logado
@@ -44,9 +40,6 @@ def sobre(request): #quando for solicitado o url sobre, será encaminhado o inde
     return render(request, 'sobre.html', context)
 
 
-
-#https://django-portuguese.readthedocs.io/en/1.0/topics/http/sessions.html
-#https://docs.djangoproject.com/en/3.0/topics/http/sessions/
 
 def login(request):
     title = "Login"

@@ -6,10 +6,20 @@
             {{ erro }}
         </div>  
     {% else %}
+        {% if alerta %}
+            <div class="alert alert-primary" role="alert">
+                {{ alerta }}
+            </div>  
+        {% endif %}
         <h2>Alterar senha ({{user.nome}} {{user.sobrenome}})</h2>
 
         <form method="POST" class="post-form">{% csrf_token %}
-            {{ form.as_p }}
+            <p>
+                <input type="password" name="senha" class="form-control" maxlenght="50" maxlength="50" required="" id="id_senha" placeholder="Digite a Senha">
+            </p>
+            <p>
+                <input type="password" name="senha2" class="form-control" maxlenght="50" maxlength="50" required="" id="id_senha2" placeholder="Repita a Senha">
+            </p>
             <button type="submit" class="btn btn-outline-success btn-block" name="bt" value="salvar">Salvar</button>
         
         </form>

@@ -76,7 +76,7 @@ def edicao(request, pk): # Edição de usuários
     if not request.session.get('logado'): # se não estiver logado
         return redirect('login') # redireciona para a tela de login
     if request.session.get('user_tipo') != 'Administrador': # se não for administrador
-        erro = "Apenas administradores do sistema podem realizar manipulações deste tipo!"
+        erro = "Contate o administrador do sistema para realizar alterações em suas informações de cadastro!"
         user_pk = request.session.get('user_pk')
         context = {
             'erro': erro,
@@ -127,12 +127,30 @@ def alterar_senha(request, pk): # Alteração de senha
     form = AlterarSenhaForm(instance=user)
     
     if request.method == "POST":
+        
         if request.POST['bt'] == "salvar":
+            if (user.senha == hashlib.sha256(request.POST['senha'].encode('utf-8')).hexdigest()): # caso a senha sejá igual a senha anterior, é retornado erro
+                alerta = "A senha não pode ser igual a senha anterior!"
+                context = {
+                    'user': user,
+                    'title': title,
+                    'alerta': alerta,
+                }
+                return render(request, 'usuarios/alterar_senha.html', context)
+            if not request.POST['senha'] == request.POST['senha2']: # verificar se os dois campos são iguais -> posteriormente realizar a verificação com java script
+                alerta = "Os dois campos devem ser iguais!"
+                context = {
+                    'user': user,
+                    'title': title,
+                    'alerta': alerta,
+                }
+                return render(request, 'usuarios/alterar_senha.html', context)
+
             form = AlterarSenhaForm(request.POST, instance=user)
             usuario = form.save(commit=False) # tem que atribuir o form para um objeto para poder realizar as manipulações 
             usuario.senha = hashlib.sha256(usuario.senha.encode('utf-8')).hexdigest() #gerando o hash da senha
             usuario.save()
-            return redirect('consulta')
+            return redirect('index')
                          
     else:
         usuario = form.save(commit=False) 
