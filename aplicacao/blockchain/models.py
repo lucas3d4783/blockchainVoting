@@ -25,13 +25,13 @@ class Chain_eleicao():
     def __init__(self): # initialize when creating a chain
         self.blocks = [self.get_genesis_block()]
     
-    def get_genesis_block(self): 
+    def get_genesis_block(self): #criando um bloco genesis
         return Block_eleicao(0, 
                             datetime.datetime.utcnow(), 
                             'Genesis', 
-                            'arbitrary')
+                            'arbitrary') 
     
-    def add_block(self, data):
+    def add_block(self, data): #função que será utilizada para adicionar o bloco na cadeia de blocos
         self.blocks.append(Block_eleicao(len(self.blocks), 
                                         datetime.datetime.utcnow(), 
                                         data, 
