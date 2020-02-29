@@ -38,16 +38,27 @@ def consulta(request): #quando for solicitado o url index, será encaminhado o i
 def votacao(request, pk): # Realização do voto 
     if not request.session.get('logado'): # se não estiver logado
         return redirect('login') # redireciona para a tela de login
-    
+    if request.method == 'POST':
+        print('chegou')
+        return redirect('index')
+
     eleicao = get_object_or_404(Eleicao, pk=pk)
     candidatos = Eleicao_candidato.objects.filter(eleicao__pk=pk)
+    eleitor = request.session.get('user_pk')
 
     context = {
         'candidatos': candidatos,
         'eleicao': eleicao,
+        'eleitor': eleitor,
     }
 
     return render(request, 'eleitor/votacao.html', context) 
     # deve ser direcionado para uma página para selecionar o respectivo candidato da respectiva eleição
 
+def selecionar_candidato(request, eleicao_pk, candidato_pk, eleitor_pk): # Realização do voto 
+    if not request.session.get('logado'): # se não estiver logado
+        return redirect('login') # redireciona para a tela de login
     
+    return redirect('index')
+
+

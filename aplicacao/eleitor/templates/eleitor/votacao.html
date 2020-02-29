@@ -9,12 +9,17 @@
     
     <div class="text-center">
         <h2 >{{eleicao.nome}}</h2><hr>
-        {% for candidato in candidatos %}        
-            <a style="margin-top: 1.5%; margin-left: 1.5%;" method="POST" class="btn btn-light btn-outline-dark" href="#" ><div> 
-                <img class="img-fluid" src="{{ candidato.candidato.foto.url }}" alt="Foto do perfil" width="300px"><br>
-                {{ candidato.candidato.nome }} {{ candidato.candidato.sobrenome }}
-            </div></a>
-        {% endfor %}
+        <form method="POST">{% csrf_token %}
+            {% for candidato in candidatos %}        
+                <a style="margin-top: 1.5%; margin-left: 1.5%;" class="btn btn-light btn-outline-dark" type="submit" 
+                href="{% url 'selecionar_candidato' eleicao_pk=eleicao.pk candidato_pk=candidato.candidato.pk eleitor_pk=eleitor %}"><div> 
+                    <img class="img-fluid" src="{{ candidato.candidato.foto.url }}" alt="Foto do perfil" width="300px"><br>
+                    {{ candidato.candidato.nome }} {{ candidato.candidato.sobrenome }}
+                </div></a>
+            {% endfor %}
+        </form>
+       
+        
     </div>
     <br>
     {%endif%}
