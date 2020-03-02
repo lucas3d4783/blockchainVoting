@@ -61,15 +61,23 @@ def selecionar_candidato(request, eleicao_pk, candidato_pk, eleitor_pk): # Reali
     if not request.session.get('logado'): # se não estiver logado
         return redirect('login') # redireciona para a tela de login
     
+
+    data = "{ 'eleicao': " +eleicao_pk+", 'eleitor': "+eleitor_pk+", 'candidato': "+candidato_pk+"}"
+
     #criação do bloco referente ao voto
-    bloco = Block_eleicao(0, 
+    bloco = Block_eleicao(0, #código pata gerar bloco do voto
                     datetime.datetime.utcnow(), 
+                    data,
                     'Genesis', 
                     'arbitrary' 
-                )
-    
-    print(bloco.hash)
+    )
+
     print(bloco.index)
+    print(bloco.timestamp)
+    print(bloco.data)
+    print(bloco.previous_hash)
+    print(bloco.hash)
+
     return redirect('index')
 
 

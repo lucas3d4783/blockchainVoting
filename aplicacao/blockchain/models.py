@@ -3,12 +3,18 @@ import hashlib
 import copy
 import datetime
 
-class Block_eleicao():
+class Block_eleicao(models.Model):
+
+    index = models.IntegerField()
+    timestamp = models.CharField(max_length=26)
+    data = models.CharField(max_length=100)
+    previous_hash = models.CharField(max_length=64)
+    hash = models.CharField(max_length=64)
+
     def __init__(self, index, timestamp, data, previous_hash):
         self.index = index
         self.timestamp = timestamp
         self.data = data
-        
         self.previous_hash = previous_hash
         self.hash = self.hashing()
     
@@ -22,6 +28,7 @@ class Block_eleicao():
 
 
 class Chain_eleicao():
+
     def __init__(self): # initialize when creating a chain
         self.blocks = [self.get_genesis_block()]
     

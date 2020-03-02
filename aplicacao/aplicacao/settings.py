@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'cursos', # CRUD de cursos 
     'eleicoes', # CRUD de eleições, além da gerência de candidatos e eleitores de uma respectiva eleição 
     'eleitor', # app onde o eleitor poderá escolher seus candidatos, verificar as eleições que ele faz parte, gerenciar suas informações (chaves, etc.)
+    'blockchain'
 ]
 
 MIDDLEWARE = [
