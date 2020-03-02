@@ -41,7 +41,6 @@ def votacao(request, pk): # Realização do voto
     if not request.session.get('logado'): # se não estiver logado
         return redirect('login') # redireciona para a tela de login
     if request.method == 'POST':
-        print('chegou')
         return redirect('index')
 
     eleicao = get_object_or_404(Eleicao, pk=pk)
@@ -62,21 +61,50 @@ def selecionar_candidato(request, eleicao_pk, candidato_pk, eleitor_pk): # Reali
         return redirect('login') # redireciona para a tela de login
     
 
-    data = "{ 'eleicao': " +eleicao_pk+", 'eleitor': "+eleitor_pk+", 'candidato': "+candidato_pk+"}"
+
+
+    dados = "{ 'eleicao': " +eleicao_pk+", 'eleitor': "+eleitor_pk+", 'candidato': "+candidato_pk+"}"
+
+    chain = Chain_eleicao()
+    
+    #gerando bloco genesis
+    bloco = chain.get_genesis_block()
+    #print(bloco.index)
+    #print(bloco.timestamp)
+    #print(bloco.data)
+    #print(bloco.previous_hash)
+    #print(bloco.hash)
+
+    #adicionando o bloco com os dados do voto
+    chain.add_block(dados)
+    chain.add_block(dados)
+    chain.add_block(dados)
+    chain.add_block(dados)
+
+    #percorrendo os blocos da chain
+    for bloco in chain.blocks:
+        print("------------------ BLOCO "+str(bloco.index)+" ------------------")
+        print("INDEX: "+str(bloco.index))
+        print("TIMESTAMP: "+str(bloco.timestamp))
+        print("DADOS: "+str(bloco.data))
+        print("HASH DO BLOCO ANTERIOR: "+str(bloco.previous_hash))
+        print("HASH DO BLOCO: "+str(bloco.hash))
+        print("---------------------------------------------\n")
+
 
     #criação do bloco referente ao voto
-    bloco = Block_eleicao(0, #código pata gerar bloco do voto
-                    datetime.datetime.utcnow(), 
-                    data,
-                    'Genesis', 
-                    'arbitrary' 
-    )
+    #bloco = Block_eleicao(0, 
+    #    datetime.datetime.utcnow(), 
+    #    dados, 
+    #    'arbitrary')
 
-    print(bloco.index)
-    print(bloco.timestamp)
-    print(bloco.data)
-    print(bloco.previous_hash)
-    print(bloco.hash)
+    #bloco.save() não funcionou o save
+
+    #print(bloco.index)
+    #print(bloco.timestamp)
+    #print(bloco.data)
+    #print(bloco.previous_hash)
+    #print(bloco.hash)
 
     return redirect('index')
 

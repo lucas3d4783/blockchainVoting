@@ -26,6 +26,12 @@ class Block_eleicao(models.Model):
         key.update(str(self.previous_hash).encode('utf-8'))
         return key.hexdigest()
 
+    #def __str__(self):
+    #    return self.index
+
+    #def __unicode__(self): #se nao utilizar o método, acontece o erro "UnicodeEncodeError: ascii codec can't encode characters in position 0-3: ordinal not in range(128)"
+    #    return self.index
+
 
 class Chain_eleicao():
 
@@ -36,7 +42,7 @@ class Chain_eleicao():
         return Block_eleicao(0, 
                             datetime.datetime.utcnow(), 
                             'Genesis', 
-                            'arbitrary') 
+                            'arbitrary')
     
     def add_block(self, data): #função que será utilizada para adicionar o bloco na cadeia de blocos
         self.blocks.append(Block_eleicao(len(self.blocks), 
