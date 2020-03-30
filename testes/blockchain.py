@@ -1,23 +1,26 @@
 import hashlib
 import json
+import datetime
 import Pyro4 #biblioteca para a utilização de objetos remotos
 
 
 #primeiramente deve ser definido o bloco
 class Block(): # classe utilizada para a criação e manipulação de cada bloco de forma individual
     #construtor do bloco
-    def __init__(self, nonce, tstamp, transaction, prevhash=''): #quando não temos um bloco anterior, definimos ele como uma string vazia (valor default)
+    def __init__(self, eleicao_pk=-1, eleitor_pk=-1, candidato_pk=-1, prevhash='', nonce=0): #quando não temos um bloco anterior, definimos ele como uma string vazia (valor default)
         #variáveis da classe
         self.nonce=nonce
-        self.tstamp=tstamp
-        self.transaction=transaction
+        self.tstamp=str(datetime.datetime.utcnow())
+        self.eleicao_pk=eleicao_pk
+        self.eleitor_pk=eleitor_pk
+        self.candidato_pk=candidato_pk
         self.prevhash=prevhash
         self.hash=self.calcHash()
 
     #função responsável por realizar o cálculo do hash do bloco
     def calcHash(self):
         #criando um dicionário com json, passando parâmetro por parâmetro, por fim, codificando para gerar o hash posteriormente
-        block_string=json.dumps({"nonce":self.nonce, "tstamp":self.tstamp, "transaction":self.transaction, "prevhash":self.prevhash,}, sort_keys=True, ).encode()
+        block_string=json.dumps({"nonce":self.nonce, "tstamp":self.tstamp, "eleicao_pk":self.eleicao_pk, "eleitor_pk":self.eleitor_pk, "candidato_pk":self.candidato_pk, "prevhash":self.prevhash,}, sort_keys=True, ).encode()
         #retornando o hash do bloco
         return hashlib.sha256(block_string).hexdigest()
     def mineBlock(self, diffic): # método utilizado para encontrar um hash com um determinado número de zeros no início (dificuldade)
@@ -30,7 +33,9 @@ class Block(): # classe utilizada para a criação e manipulação de cada bloco
     def __str__(self):
         bloco = "------------------------------\n" + "nonce: " + str(self.nonce)
         bloco += "\ntstamp: " + str(self.tstamp)
-        bloco += "\ntransaction: " + str(self.transaction)
+        bloco += "\neleição_pk: " + str(self.eleicao_pk)
+        bloco += "\neleitor_pk: " + str(self.eleitor_pk)
+        bloco += "\ncandidato_pk: " + str(self.candidato_pk)
         bloco += "\nprev_hash: " + str(self.prevhash)
         bloco += "\nhash: " + str(self.hash)
         bloco += "\n------------------------------"
@@ -48,7 +53,7 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
         self.chain=[self.generateGenesisBlock(),] #criando a lista que será utilizada para armazenar os blocos, além de adicionar o bloco gênesis
         self.difficulty=5 # definindo a dificuldade da mineração - quanto maior o valor, mais tempo para minerar
     def generateGenesisBlock(self): #método para a criação de um bloco gênesis
-        return Block(0, '19/03/2020', 'Genesis Block') #retorna um bloco gênesis
+        return Block('Genesis Block', 'Genesis Block', 'Genesis Block') #retorna um bloco gênesis
     def getLastBlock(self): #método para obter o último bloco da cadeia
         return self.chain[-1] #pega o último elemento da lista
     def addBlock(self, newBlock): #adicionar novo bloco na cadeia, passando o novo bloco como parâmetro
@@ -68,8 +73,8 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
                 return False # se os hashes forem diferente, é retornado falso
         return True
 
-    def criarBloco(self, nonce, tstamp, transaction):
-        bloco = Block(nonce, tstamp, transaction) # criando um bloco 
+    def criarBloco(self, eleicao_pk, eleitor_pk, candidato_pk):
+        bloco = Block(eleicao_pk, eleitor_pk, candidato_pk) # criando um bloco 
         self.addBlock(bloco) # adicionando o bloco na chain
         return True;
 
@@ -83,7 +88,10 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
             count+=1 # incrementando o contador de blocos
         return result;
         #print("Estado do sistema: ", self.isChainValid()) #verifica a integridade dos blocos e da chain
-
+    
+    def get_chain_size(self): # obter o tamanho da cadeia de blocos sem contar o bloco gênesis
+        return len(self.chain)-1
+    
 
 #geração de uma blockchain para teste
 #blockchain=Blockchain() #criando uma cadeia de votos

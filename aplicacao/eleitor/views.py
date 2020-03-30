@@ -3,6 +3,7 @@ from eleicoes.models import Eleicao, Eleicao_eleitor, Eleicao_candidato
 from usuarios.models import Usuario
 from blockchain.models import Block_eleicao, Chain_eleicao
 import datetime
+import Pyro4
 
 def index(request): #quando for solicitado o url index, será encaminhado o index.html
     if not request.session.get('logado'): # se não estiver logado
@@ -61,14 +62,23 @@ def selecionar_candidato(request, eleicao_pk, candidato_pk, eleitor_pk): # Reali
         return redirect('login') # redireciona para a tela de login
     
 
+    ns = Pyro4.locateNS() # localizando o servidor de nomes
+    uri = ns.lookup('obj') # obtendo a uri do objeto remoto
+    o = Pyro4.Proxy(uri) #pegando o objeto remoto
+
+    #geração de um bloco referente ao voto
+    o.criarBloco(eleicao_pk, eleitor_pk, candidato_pk) #criando bloco
+    print(o.getChain())
+    print("STATUS da Chain: ", o.isChainValid())
+    print("QUANTIDADE de BLOCOS: ", o.get_chain_size())
 
 
-    dados = "{ 'eleicao': " +eleicao_pk+", 'eleitor': "+eleitor_pk+", 'candidato': "+candidato_pk+"}"
+    #dados = "{ 'eleicao': " +eleicao_pk+", 'eleitor': "+eleitor_pk+", 'candidato': "+candidato_pk+"}"
 
-    chain = Chain_eleicao()
+    #chain = Chain_eleicao()
     
     #gerando bloco genesis
-    bloco = chain.get_genesis_block()
+    #bloco = chain.get_genesis_block()
     #print(bloco.index)
     #print(bloco.timestamp)
     #print(bloco.data)
@@ -76,20 +86,20 @@ def selecionar_candidato(request, eleicao_pk, candidato_pk, eleitor_pk): # Reali
     #print(bloco.hash)
 
     #adicionando o bloco com os dados do voto
-    chain.add_block(dados)
-    chain.add_block(dados)
-    chain.add_block(dados)
-    chain.add_block(dados)
+    #chain.add_block(dados)
+    #chain.add_block(dados)
+    #chain.add_block(dados)
+    #chain.add_block(dados)
 
     #percorrendo os blocos da chain
-    for bloco in chain.blocks:
-        print("------------------ BLOCO "+str(bloco.index)+" ------------------")
-        print("INDEX: "+str(bloco.index))
-        print("TIMESTAMP: "+str(bloco.timestamp))
-        print("DADOS: "+str(bloco.data))
-        print("HASH DO BLOCO ANTERIOR: "+str(bloco.previous_hash))
-        print("HASH DO BLOCO: "+str(bloco.hash))
-        print("---------------------------------------------\n")
+    #for bloco in chain.blocks:
+    #    print("------------------ BLOCO "+str(bloco.index)+" ------------------")
+    #    print("INDEX: "+str(bloco.index))
+    #    print("TIMESTAMP: "+str(bloco.timestamp))
+    #    print("DADOS: "+str(bloco.data))
+    #    print("HASH DO BLOCO ANTERIOR: "+str(bloco.previous_hash))
+    #    print("HASH DO BLOCO: "+str(bloco.hash))
+    #    print("---------------------------------------------\n")
 
 
     #criação do bloco referente ao voto
