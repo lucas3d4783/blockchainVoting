@@ -1,4 +1,4 @@
-from django.db import models
+import Pyro4
 import hashlib
 import copy
 import datetime
@@ -33,6 +33,7 @@ class Block_eleicao():
     #    return self.index
 
 
+@Pyro4.expose
 class Chain_eleicao():
 
     def __init__(self): # initialize when creating a chain
@@ -88,3 +89,11 @@ class Chain_eleicao():
             if self.blocks[i] != chain_2.blocks[i]:
                 return self.fork(i-1)
         return self.fork(min_chain_size)
+
+
+daemon = Pyro4.Daemon()
+uri = daemon.register(Chain_eleicao)
+
+print(uri)
+
+daemon.requestLoop()
