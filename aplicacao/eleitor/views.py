@@ -44,9 +44,31 @@ def votacao(request, pk): # Realização do voto
     if request.method == 'POST':
         return redirect('index')
 
+    eleicao_pk = pk
+    eleitor_pk = request.session.get('user_pk')
+
+    ns = Pyro4.locateNS() # localizando o servidor de nomes
+    uri = ns.lookup('obj') # obtendo a uri do objeto remoto
+    o = Pyro4.Proxy(uri) #pegando o objeto remoto
+
+    ja_votou = o.verificaSeJaVotou(eleicao_pk, eleitor_pk)
+    print("QUANTIDADE de BLOCOS: ", o.get_chain_size())
+    print(ja_votou, eleicao_pk, eleitor_pk)
     eleicao = get_object_or_404(Eleicao, pk=pk)
     candidatos = Eleicao_candidato.objects.filter(eleicao__pk=pk)
     eleitor = request.session.get('user_pk')
+
+    if ja_votou:
+        ja_votou = """Você já votou! Aguarde o término da eleição para conferir os resultados. 
+        Em caso de dúvidas consulte a nossa equipe de suporte: lucas.reichert@redes.ufsm.br"""
+        context = {
+            'ja_votou': ja_votou,
+            'candidatos': candidatos,
+            'eleicao': eleicao,
+            'eleitor': eleitor,
+        }
+        return render(request, 'eleitor/votacao.html', context)
+    
 
     context = {
         'candidatos': candidatos,
@@ -57,7 +79,7 @@ def votacao(request, pk): # Realização do voto
     return render(request, 'eleitor/votacao.html', context) 
     # deve ser direcionado para uma página para selecionar o respectivo candidato da respectiva eleição
 
-def selecionar_candidato(request, eleicao_pk, candidato_pk, eleitor_pk): # Realização do voto 
+def selecionar_candidato(request, eleicao_pk, eleitor_pk, candidato_pk): # Realização do voto 
     if not request.session.get('logado'): # se não estiver logado
         return redirect('login') # redireciona para a tela de login
     
@@ -65,12 +87,18 @@ def selecionar_candidato(request, eleicao_pk, candidato_pk, eleitor_pk): # Reali
     ns = Pyro4.locateNS() # localizando o servidor de nomes
     uri = ns.lookup('obj') # obtendo a uri do objeto remoto
     o = Pyro4.Proxy(uri) #pegando o objeto remoto
-
-    #geração de um bloco referente ao voto
-    o.criarBloco(eleicao_pk, eleitor_pk, candidato_pk) #criando bloco
-    print(o.getChain())
-    print("STATUS da Chain: ", o.isChainValid())
-    print("QUANTIDADE de BLOCOS: ", o.get_chain_size())
+    print(eleicao_pk, eleitor_pk)
+    ja_votou = o.verificaSeJaVotou(eleicao_pk, eleitor_pk)
+    
+    if ja_votou:
+        print("Você já votou nesta Eleição")
+    else:
+        #geração de um bloco referente ao voto
+        o.criarBloco(eleicao_pk, eleitor_pk, candidato_pk) #criando bloco
+        print(o.getChain())
+        print("STATUS da Chain: ", o.isChainValid())
+        print("QUANTIDADE de BLOCOS: ", o.get_chain_size())
+   
 
 
     #dados = "{ 'eleicao': " +eleicao_pk+", 'eleitor': "+eleitor_pk+", 'candidato': "+candidato_pk+"}"

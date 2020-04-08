@@ -2,25 +2,26 @@
 
 {% block content %}
     {% if erro %}
-    <div class="alert alert-danger" role="alert">
+    <div class="alert alert-danger text-center" role="alert">
         {{ erro }}
     </div>  
+    {% elif ja_votou %}
+        <div class="alert alert-warning" role="alert">
+            {{ ja_votou }}
+        </div>  
     {% else %}
-    
-    <div class="text-center">
-        <h2 >{{eleicao.nome}}</h2><hr>
-        <form method="POST">{% csrf_token %}
-            {% for candidato in candidatos %}        
-                <a style="margin-top: 1.5%; margin-left: 1.5%;" class="btn btn-light btn-outline-dark" type="submit" 
-                href="{% url 'selecionar_candidato' eleicao_pk=eleicao.pk candidato_pk=candidato.candidato.pk eleitor_pk=eleitor %}"><div> 
-                    <img class="img-fluid" src="{{ candidato.candidato.foto.url }}" alt="Foto do perfil" width="300px"><br>
-                    {{ candidato.candidato.nome }} {{ candidato.candidato.sobrenome }}
-                </div></a>
-            {% endfor %}
-        </form>
-       
-        
-    </div>
-    <br>
+        <div class="text-center">
+            <h2 >{{eleicao.nome}}</h2><hr>
+            <form method="POST">{% csrf_token %}
+                {% for candidato in candidatos %}        
+                    <a style="margin-top: 1.5%; margin-left: 1.5%;" class="btn btn-light btn-outline-dark" type="submit" 
+                    href="{% url 'selecionar_candidato' eleicao_pk=eleicao.pk eleitor_pk=eleitor candidato_pk=candidato.candidato.pk  %}"><div> 
+                        <img class="img-fluid" src="{{ candidato.candidato.foto.url }}" alt="Foto do perfil" width="300px"><br>
+                        {{ candidato.candidato.nome }} {{ candidato.candidato.sobrenome }}
+                    </div></a>
+                {% endfor %}
+            </form>
+        </div>
+        <br>
     {%endif%}
 {% endblock %}
