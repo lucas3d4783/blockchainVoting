@@ -64,7 +64,8 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
         self.chain=[self.generateGenesisBlock(),] #criando a lista que será utilizada para armazenar os blocos, além de adicionar o bloco gênesis
         self.difficulty=4 # definindo a dificuldade da mineração - quanto maior o valor, mais tempo para minerar
         self.listaDeVotos = [] #criando um novo arrai para armazenar o somatório dos votos
-    
+        #print(type(self.chain))
+        #print(type(self))
     def generateGenesisBlock(self): #método para a criação de um bloco gênesis
         return Block(0, 'Genesis Block', 'Genesis Block', 'Genesis Block') #retorna um bloco gênesis
     
@@ -91,12 +92,14 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
         return True
 
     def synchronized(func):
+        print(type(func))
         func.__lock__ = threading.Lock()
             
         def synced_func(*args, **kws):
             with func.__lock__:
+                print("tipo: ", type(func(*args, **kws)))
                 return func(*args, **kws)
-
+        
         return synced_func
 
     @synchronized
@@ -127,13 +130,13 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
         return True;
 
     def getChain(self):
-        count = 0 # criando um contador para os blocos
+        #count = 0 # criando um contador para os blocos
         result = "";
         for bloco in self.chain: #varrer a cadeia de blocos
             result+="\n------------------------------\n"
             result+="           BLOCO " + str(bloco.index) + "\n"
             result+=bloco.__str__() # mostrando as informações do respectivo bloco
-            count+=1 # incrementando o contador de blocos
+            #count+=1 # incrementando o contador de blocos
         return result;
         #print("Estado do sistema: ", self.isChainValid()) #verifica a integridade dos blocos e da chain
     
