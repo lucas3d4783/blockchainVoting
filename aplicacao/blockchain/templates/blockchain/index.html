@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% if erro %}
+        <div class="alert alert-danger" role="alert">
+            {{ erro }}
+        </div>  
+    {% else %}
+        <a  href="{% url 'add_bloco_generico' %}" class="btn btn-outline-success btn-block btn-lg">Adicionar Bloco</a>
+        <a  href="{% url 'consulta_blockchain' %}" class="btn btn-outline-success btn-block btn-lg">Consultar a Blockchain</a>
+
+    {% endif %}
+    
+{% endblock %}  

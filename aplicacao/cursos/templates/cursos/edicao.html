@@ -1,14 +1,20 @@
 {% extends "base.html" %}
     
 {% block content %}
+    {% if erro %}
+        <div class="alert alert-danger" role="alert">
+            {{ erro }}
+        </div>  
+    {% else %}
+        <h2>Edição de Cursos</h2>
+        <form method="POST" class="post-form">{% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-outline-success btn-block" name="bt" value="salvar">Salvar</button>
+            <button type="submit" class="btn btn-outline-danger btn-block" name="bt" value="remover">Remover</button>
+            <a method="POST" class="btn btn-light btn-block btn-outline-primary" href="{% url 'consulta_cursos' %}">Cancelar</a>
 
-    <h2>Edição de Cursos</h2>
-    <form method="POST" class="post-form">{% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-outline-success btn-block" name="bt" value="salvar">Salvar</button>
-        <button type="submit" class="btn btn-outline-danger btn-block" name="bt" value="remover">Remover</button>
-        <a method="POST" class="btn btn-light btn-block btn-outline-primary" href="{% url 'consulta_cursos' %}">Cancelar</a>
-
-    </form>
+        </form>
+    {% endif %}
+    
 
 {% endblock %}

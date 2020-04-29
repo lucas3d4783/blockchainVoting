@@ -2,53 +2,62 @@
 {% load static %}
 
 {% block content %}
-    <h2>Edição de Eleições</h2>
-    <form method="POST" class="post-form">{% csrf_token %}
-         <!--{% csrf_token %}  adiciona uma camada de segurança no formulário-->
-        
-        <p>
-            <label for='id_tipo'>Tipo: </label>{{form.tipo}}
-        </p>
-        <p>
-            <label for='id_nome'>Nome: </label>{{form.nome}}
-        </p>
-        <p>
-            <label for='id_descricao'>Descrição: </label>{{form.descricao}}
-        </p>
-        <p>
-            <label for='id_data_ini'>Data Inicial: </label><br>{{form.data_ini}}
-        </p>
-        <p>
-            <label for='id_data_fim'>Data Final: </label><br>{{form.data_fim}}
-        </p>
+    {% if erro %}
+    <div class="alert alert-danger" role="alert">
+        {{ erro }}
+    </div>  
+    {% else %}
+        <h2>Edição de Eleições</h2>
+        <form method="POST" class="post-form">{% csrf_token %}
+            <!--{% csrf_token %}  adiciona uma camada de segurança no formulário-->
+            
+            <p>
+                <label for='id_tipo'>Tipo: </label>{{form.tipo}}
+            </p>
+            <p>
+                <label for='id_nome'>Nome: </label>{{form.nome}}
+            </p>
+            <p>
+                <label for='id_descricao'>Descrição: </label>{{form.descricao}}
+            </p>
+            <p>
+                <label for='id_data_ini'>Data Inicial: </label><br>{{form.data_ini}}
+            </p>
+            <p>
+                <label for='id_data_fim'>Data Final: </label><br>{{form.data_fim}}
+            </p>
 
-        <!-- Deve ser criado um campo para a adição de candidatos (filtrar usuários que são candidatos) 
-        O valor do campo deve ser configurado com java sript para adicionar todos os ids em forma de texto 
-        Ou pode ser criado uma tela nova só para realizar a tarefa de adicionar candidatos -->
-        <hr>
-        <div class="btn btn-block">
-            <p><b>Gerenciar CANDIDATOS</b></p>
-            <a href="{% url 'edCandidatos' pk=eleicao.pk %}" >
-                <img type="button" class="img-fluid" name="addCandidato" style="width: 10%;" src="{% static 'media/icons/cog.svg' %}">
-            </a>
-                <!--<script>addCandidato()</script>-->
-        </div>
-        <hr>
-        <!-- Deve ser criado um campo para a adição de eleitores (filtrar usuários que são eleitores) -->
-        <div class="btn btn-block">
-            <p><b>Gerenciar ELEITORES</b></p>
-            <a  href="{% url 'edEleitores' pk=eleicao.pk %}">
-                <img type="button" class="img-fluid" name="addEleitor" style="width: 10%;" src="{% static 'media/icons/cog.svg' %}">
-            </a>
-                <!--<script>addCandidato()</script>-->
-        </div>
-        <hr>
+            <!-- Deve ser criado um campo para a adição de candidatos (filtrar usuários que são candidatos) 
+            O valor do campo deve ser configurado com java sript para adicionar todos os ids em forma de texto 
+            Ou pode ser criado uma tela nova só para realizar a tarefa de adicionar candidatos -->
+            <hr>
+            <div class="btn btn-block">
+                <p><b>Gerenciar CANDIDATOS</b></p>
+                <a href="{% url 'edCandidatos' pk=eleicao.pk %}" >
+                    <img type="button" class="img-fluid" name="addCandidato" style="width: 10%;" src="{% static 'media/icons/cog.svg' %}">
+                </a>
+                    <!--<script>addCandidato()</script>-->
+            </div>
+            <hr>
+            <!-- Deve ser criado um campo para a adição de eleitores (filtrar usuários que são eleitores) -->
+            <div class="btn btn-block">
+                <p><b>Gerenciar ELEITORES</b></p>
+                <a  href="{% url 'edEleitores' pk=eleicao.pk %}">
+                    <img type="button" class="img-fluid" name="addEleitor" style="width: 10%;" src="{% static 'media/icons/cog.svg' %}">
+                </a>
+                    <!--<script>addCandidato()</script>-->
+            </div>
+            <hr>
 
 
-        <button type="submit" class="btn btn-outline-success btn-block" name="bt" value="salvar">Salvar</button>
-        <button type="submit" class="btn btn-outline-danger btn-block" name="bt" value="remover">Remover</button>
-        <a method="POST" class="btn btn-light btn-block btn-outline-primary" href="{% url 'consulta_eleicoes' %}">Cancelar</a>
+            <button type="submit" class="btn btn-outline-success btn-block" name="bt" value="salvar">Salvar</button>
+            <button type="submit" class="btn btn-outline-danger btn-block" name="bt" value="remover">Remover</button>
+            <a method="POST" class="btn btn-light btn-block btn-outline-primary" href="{% url 'consulta_eleicoes' %}">Cancelar</a>
 
-    </form>
+        </form>
+
+    {% endif %}
+
+
 
 {% endblock %}

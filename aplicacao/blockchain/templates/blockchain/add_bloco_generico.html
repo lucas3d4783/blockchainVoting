@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% if erro %}
+        <div class="alert alert-danger" role="alert">
+            {{ erro }}
+        </div>  
+    {% else %}
+        <h2>Adicionar Bloco na Cadeia de Blocos</h2>
+        <form method="POST" class="post-form">{% csrf_token %}
+          
+            <!-- exemplo para testar objeto json:
+            { "destinatário": ["João da Silva", "Lucas Coelho Reichert"], "valor": "R$500,00", "remetente": "Joana da Rosa", "teste": { "destinatário": ["João da Silva", "Lucas Coelho Reichert"], "valor": "R$500,00", "remetente": { "destinatário": ["João da Silva", "Lucas Coelho Reichert"], "valor": "R$500,00", "remetente": [1,2,2,3,4,5,6,"kfdjasl"]}}, "teste": "teste" } -->
+            <div class="form-group">
+                <label for='dados'>Digite um objeto no formato JSON (teste a sintaxe do objeto para liberar o botão Adicionar): </label>
+                <textarea onclick="desativarBt()" onfocus="desativarBt()" onblur="desativarBt()" class="form-control" id="dados" name="dados" value="" placeholder='Ex: { "destinatário": ["João da Silva", "Lucas Coelho Reichert"], "valor": "R$500,00", "remetente": "Joana da Rosa"}' rows="6">
+                </textarea>
+            </div>
+            
+            <button id="btAdd" type="submit" class="btn btn-outline-success btn-block" >Adicionar</button>
+
+
+            <!--Tirar espaços que aparecem ao carregar o textarea -->
+            <script type="text/javascript">
+                document.getElementById('dados').innerHTML = ''; 
+                document.getElementById('btAdd').disabled = true;
+                function testarObjJSON() { // testa se não vai ocorrer nenhum erro ao converter o objeto JSON em java
+                        try {
+                            obj = JSON.parse(document.getElementById("dados").value);
+                            document.getElementById('resultado').innerHTML = "Sintaxe correta! <br>" +  obj;
+                            document.getElementById('btAdd').disabled = false;
+                            return true;
+                        } catch(err) {
+                            document.getElementById('resultado').innerHTML = "Sintaxe incorreta! <br>Erro: " + err.message + "<br>" + document.getElementById("dados").value;
+                            document.getElementById('btAdd').disabled = true;
+                            return false;
+                        }
+                
+                    //var obj =  JSON.parse(document.getElementById("dados").value);
+                    //document.getElementById('resultado').innerHTML = obj.valor
+                }
+                function desativarBt(){ // desativa o botão adicionar 
+                    document.getElementById('btAdd').disabled = true;
+                }
+            </script>
+        </form>
+        <hr>
+        <p id=resultado>
+
+        </p>
+        <p>
+            <button class="btn btn-outline-primary btn-block" onclick="testarObjJSON()">Testar Objeto JSON</button>
+        </p>
+    {% endif %}
+    
+{% endblock %}  

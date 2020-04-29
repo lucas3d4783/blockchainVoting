@@ -21,26 +21,34 @@ randfunc = pool.get_bytes
 # randfunc = pool.read
  
 # Tamanho da chave, em bits
-N = 1024
+N = 2048
  
 # O algoritmo RSA usado aqui não utiliza K, que pode ser uma string
 # nula.
-K = ""
+K = None
 
 # Geramos a chave (contendo a chave pública e privada):
 key = RSA.generate(N, randfunc)
 
+
 # Criptografamos o texto com a chave:
-enc = key.encrypt(texto, K)
+enc = key.encrypt(12515151, K)
+
  
 # Podemos decriptografar usando a chave:
 dec = key.decrypt(enc)
 
 # Separando apenas a chave pública:
 pub_key = key.publickey()
+
+# exportar chave pública
+print(pub_key.exportKey())
+
+# exportar chave pública
+print(key.exportKey())
  
 # Criptografando com a chave pública:
-enc = pub_key.encrypt(texto, K)
+enc = pub_key.encrypt(3424243243, K)
 
 # Decriptografando com a chave privada:
 dec = key.decrypt(enc)

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% if erro %}
+        <div class="alert alert-danger" role="alert">
+            {{ erro }}
+        </div>  
+    {% else %}
+        <div class="container text-center" >
+            <div class="btn btn-block"></div><h2>Cadeia de Blocos do Sistema</h2>
+            <p style="color: firebrick;">STATUS do Sistema: {{status}}</p></div>
+            {% if chain %}
+                {% for bloco in chain %}      
+                    <a style="padding: 0.5%; max-width: 354px; width: 354px; margin-top: 1.5%; margin-left: 0.2%;" class="btn btn-success"><p><div> 
+                        <div class="btn btn-dark btn-block">Bloco {{bloco.index}}</div>
+                        <div style="padding: 0.1%; " class="btn btn-secondary btn-block">
+                            <!--<b>Index:</b> {{bloco.index}}<br>-->
+                            <br><b>Nonce: </b> {{bloco.nonce}} <hr>
+                            <b>Timestamp</b><p style="font-size: 14px">{{bloco.tstamp}}</p><hr>
+                            <b>DADOS</b><br><p style="font-size: 12px">{{bloco.dados}}</p><hr>
+                            <b>Prévio Hash</b><p style="font-size: 9px">{{bloco.prevhash}}</p>
+                            <b>Hash</b><br><p style="font-size: 9px">{{bloco.hash}}</p>
+                        </div>
+                    </div></p></a>
+                {% endfor %}
+            {% endif %}
+        
+            <script>
+
+            </script>
+           
+        </div>  
+        
+    {% endif %}
+    
+{% endblock %}  

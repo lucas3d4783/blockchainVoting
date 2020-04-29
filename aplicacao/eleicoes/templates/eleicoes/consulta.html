@@ -2,15 +2,22 @@
 {% load static %}
 
 {% block content %}
-    {% for eleicao in eleicoes %}        
-        <a method="POST" class="btn btn-light btn-block btn-outline-dark" href="{% url 'edicao_eleicoes' pk=eleicao.pk %}"><div> 
-            <!-- pk na url para encaminhar para uma eleição específica -->
-            <h2> {{ eleicao.nome }} </h2>
-            <p><b>Descrição:</b> {{ eleicao.descricao }}</p>
-            <p><b>Data Inicial:</b> {{ eleicao.data_ini }}</p>
-            <p><b>Data Final:</b> {{ eleicao.data_fim }}</p>
-            <p><b>Tipo:</b> {{eleicao.tipo}}</p> 
-        </div></a>
-    {% endfor %}
+    {% if erro %}
+        <div class="alert alert-danger" role="alert">
+            {{ erro }}
+        </div>  
+    {% else %}
+        {% for eleicao in eleicoes %}        
+            <a method="POST" class="btn btn-light btn-block btn-outline-dark" href="{% url 'edicao_eleicoes' pk=eleicao.pk %}"><div> 
+                <!-- pk na url para encaminhar para uma eleição específica -->
+                <h2> {{ eleicao.nome }} </h2>
+                <p><b>Descrição:</b> {{ eleicao.descricao }}</p>
+                <p><b>Data Inicial:</b> {{ eleicao.data_ini }}</p>
+                <p><b>Data Final:</b> {{ eleicao.data_fim }}</p>
+                <p><b>Tipo:</b> {{eleicao.tipo}}</p> 
+            </div></a>
+        {% endfor %}
+    {% endif %}
+    
     
 {% endblock %}

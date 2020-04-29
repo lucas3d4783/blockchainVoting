@@ -31,6 +31,7 @@ urlpatterns = [
     path('cursos/', include('cursos.urls')), # incluindos as urls de cursos
     path('eleicoes/', include('eleicoes.urls')), # incluindos as urls de eleicoes
     path('eleitor/', include('eleitor.urls')), # incluindos as urls de eleitor
+    path('blockchain/', include('blockchain.urls')), # incluindos as urls de eleitor
    
 ]
 

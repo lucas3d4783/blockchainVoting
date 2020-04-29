@@ -9,6 +9,9 @@ from django.core.exceptions import ObjectDoesNotExist
 def index(request): #quando for solicitado o url index, será encaminhado o index.html
     if not request.session.get('logado'): # se não estiver logado
         return redirect('login')
+    if request.session.get('user_tipo') == 'Eleitor': # se for um eleitor
+        return redirect('index_eleitor') # redireciona para a tela de eleitores
+
     user_pk = request.session.get('user_pk')
     user_name = request.session.get('user_name')
     user_foto = request.session.get('user_foto')

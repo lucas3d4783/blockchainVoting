@@ -7,6 +7,12 @@ from cursos.models import Curso
 def index(request): #quando for solicitado o url index, será encaminhado o index.html
     if not request.session.get('logado'): # se não estiver logado
         return redirect('login') # redireciona para a tela de login
+    if request.session.get('user_tipo') != 'Administrador': # se não for administrador
+        erro = "Apenas administradores do sistema podem realizar manipulações deste tipo!"
+        context = {
+            'erro': erro,
+        }
+        return render(request, 'cursos/index.html', context) # mensagem de erro
     title = 'Cursos'
     context = {
         'title': title,
@@ -18,6 +24,12 @@ def index(request): #quando for solicitado o url index, será encaminhado o inde
 def cadastro(request): #  Criação de cursos
     if not request.session.get('logado'): # se não estiver logado
         return redirect('login') # redireciona para a tela de login
+    if request.session.get('user_tipo') != 'Administrador': # se não for administrador
+        erro = "Apenas administradores do sistema podem realizar manipulações deste tipo!"
+        context = {
+            'erro': erro,
+        }
+        return render(request, 'cursos/cadastro.html', context) # mensagem de erro
     title = 'Cadastro de Cursos'
     form = CadastroForm(request.POST or None) # o formulário pode estar vázio ou não, se estiver apenas carregando o formulário
     context = {
@@ -35,6 +47,12 @@ def cadastro(request): #  Criação de cursos
 def consulta(request): # Listagem dos cursos criados
     if not request.session.get('logado'): # se não estiver logado
         return redirect('login') # redireciona para a tela de login
+    if request.session.get('user_tipo') != 'Administrador': # se não for administrador
+        erro = "Apenas administradores do sistema podem realizar manipulações deste tipo!"
+        context = {
+            'erro': erro,
+        }
+        return render(request, 'cursos/consulta.html', context) # mensagem de erro
     title = 'Consulta de Cursos'
     cursos = Curso.objects.filter().order_by('nome') #buscar os cursos no banco e ordenar pelo nome
     context =  {
@@ -46,6 +64,12 @@ def consulta(request): # Listagem dos cursos criados
 def edicao(request, pk): # Edição de cursos 
     if not request.session.get('logado'): # se não estiver logado
         return redirect('login') # redireciona para a tela de login
+    if request.session.get('user_tipo') != 'Administrador': # se não for administrador
+        erro = "Apenas administradores do sistema podem realizar manipulações deste tipo!"
+        context = {
+            'erro': erro,
+        }
+        return render(request, 'cursos/edicao.html', context) # mensagem de erro
     title = 'Edição de Cursos'
     curso = get_object_or_404(Curso, pk=pk)
     form = EdicaoForm(instance=curso)

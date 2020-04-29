@@ -1,11 +1,17 @@
 {% extends 'base.html' %}
 
 {% block content %} 
+    {% if erro %}
+        <div class="alert alert-danger" role="alert">
+            {{ erro }}
+        </div>  
+    {% else %}
+        {% for curso in cursos %}
+            <a method="POST" class="btn btn-light btn-block btn-outline-dark" href="{% url 'edicao_cursos' pk=curso.pk %}"><div> <!--Depois deve ser inserido a pk na url para encaminhar para um usuário específico-->
+                <h2> {{ curso.nome }}</h2>
+                <p><b>Descrição:</b> {{ curso.descricao}}</p>
+            </div></a>
+        {% endfor %}
+    {% endif %}
     
-    {% for curso in cursos %}
-        <a method="POST" class="btn btn-light btn-block btn-outline-dark" href="{% url 'edicao_cursos' pk=curso.pk %}"><div> <!--Depois deve ser inserido a pk na url para encaminhar para um usuário específico-->
-            <h2> {{ curso.nome }}</h2>
-            <p><b>Descrição:</b> {{ curso.descricao}}</p>
-        </div></a>
-    {% endfor %}
 {% endblock %}

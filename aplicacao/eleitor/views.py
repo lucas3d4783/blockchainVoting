@@ -8,6 +8,12 @@ import Pyro4
 def index(request): #quando for solicitado o url index, será encaminhado o index.html
     if not request.session.get('logado'): # se não estiver logado
         return redirect('login') # redireciona para a tela de login
+    if request.session.get('user_tipo') != 'Eleitor': # se não for ELEITOR
+        erro = "Apenas ELEITORES podem acessar esta parte do sistema!"
+        context = {
+            'erro': erro,
+        }
+        return render(request, 'eleitor/index.html', context) # mensagem de erro
     title = 'Eleitor' # Definir título da página
     context = {
         'title': title,
@@ -17,6 +23,12 @@ def index(request): #quando for solicitado o url index, será encaminhado o inde
 def consulta(request): #quando for solicitado o url index, será encaminhado o index.html
     if not request.session.get('logado'): # se não estiver logado
         return redirect('login') # redireciona para a tela de login
+    if request.session.get('user_tipo') != 'Eleitor': # se não for administrador
+        erro = "Apenas ELEITORES podem acessar esta parte do sistema!"
+        context = {
+            'erro': erro,
+        }
+        return render(request, 'eleitor/index.html', context) # mensagem de erro
     title = 'Consulta' # Definir título da página
     pk = request.session.get('user_pk')
     #print(pk)
@@ -41,6 +53,12 @@ def consulta(request): #quando for solicitado o url index, será encaminhado o i
 def votacao(request, pk): # Realização do voto 
     if not request.session.get('logado'): # se não estiver logado
         return redirect('login') # redireciona para a tela de login
+    if request.session.get('user_tipo') != 'Eleitor': # se não for ELEITOR
+        erro = "Apenas ELEITORES podem acessar esta parte do sistema!"
+        context = {
+            'erro': erro,
+        }
+        return render(request, 'eleitor/votacao.html', context) # mensagem de erro
     if request.method == 'POST':
         return redirect('index')
 
@@ -82,19 +100,26 @@ def votacao(request, pk): # Realização do voto
 def selecionar_candidato(request, eleicao_pk, eleitor_pk, candidato_pk): # Realização do voto 
     if not request.session.get('logado'): # se não estiver logado
         return redirect('login') # redireciona para a tela de login
+    if request.session.get('user_tipo') != 'Eleitor': # se não for ELEITOR
+        erro = "Apenas ELEITORES podem acessar esta parte do sistema!"
+        context = {
+            'erro': erro,
+        }
+        return render(request, 'eleitor/index.html', context) # mensagem de erro
     
+    user_pk = request.session.get('user_pk') # foi substituido para garantir que o usuário não vai enviar a chave errada
 
     ns = Pyro4.locateNS() # localizando o servidor de nomes
     uri = ns.lookup('obj') # obtendo a uri do objeto remoto
     o = Pyro4.Proxy(uri) #pegando o objeto remoto
-    print(eleicao_pk, eleitor_pk)
-    ja_votou = o.verificaSeJaVotou(eleicao_pk, eleitor_pk)
+    print(eleicao_pk, user_pk)
+    ja_votou = o.verificaSeJaVotou(eleicao_pk, user_pk)
     
     if ja_votou:
         print("Você já votou nesta Eleição")
     else:
         #geração de um bloco referente ao voto
-        o.criarBloco(eleicao_pk, eleitor_pk, candidato_pk) #criando bloco
+        o.criarBloco(eleicao_pk, user_pk, candidato_pk) #criando bloco
         print(o.getChain())
         print("STATUS da Chain: ", o.isChainValid())
         print("QUANTIDADE de BLOCOS: ", o.get_chain_size())

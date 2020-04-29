@@ -11,7 +11,6 @@ from django.db import models
 #from usuarios.models import handle_uploaded_file
 
 
-
 def index(request): #quando for solicitado o url index, será encaminhado o index.html
     if not request.session.get('logado'): # se não estiver logado
         return redirect('login') # redireciona para a tela de login
