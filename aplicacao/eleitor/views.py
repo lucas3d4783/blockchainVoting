@@ -66,7 +66,7 @@ def votacao(request, pk): # Realização do voto
     eleitor_pk = request.session.get('user_pk')
 
     ns = Pyro4.locateNS() # localizando o servidor de nomes
-    uri = ns.lookup('obj') # obtendo a uri do objeto remoto
+    uri = ns.lookup('blockchain') # obtendo a uri do objeto remoto
     o = Pyro4.Proxy(uri) #pegando o objeto remoto
 
     ja_votou = o.verificaSeJaVotou(eleicao_pk, eleitor_pk)
@@ -110,7 +110,7 @@ def selecionar_candidato(request, eleicao_pk, eleitor_pk, candidato_pk): # Reali
     user_pk = request.session.get('user_pk') # foi substituido para garantir que o usuário não vai enviar a chave errada
 
     ns = Pyro4.locateNS() # localizando o servidor de nomes
-    uri = ns.lookup('obj') # obtendo a uri do objeto remoto
+    uri = ns.lookup('blockchain') # obtendo a uri do objeto remoto
     o = Pyro4.Proxy(uri) #pegando o objeto remoto
     print(eleicao_pk, user_pk)
     ja_votou = o.verificaSeJaVotou(eleicao_pk, user_pk)

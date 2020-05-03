@@ -182,24 +182,24 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
         lista = []
         for bloco in self.chain:
             #chain += '''{"bloco": {"index": "''' + str(bloco.index) + '",' + '''"nonce": "''' + str(bloco.nonce) + '",' + '''"tstamp": "''' + str(bloco.tstamp) + '",' + '''"dados": "''' + str(bloco.dados) + '",' + '''"prev_hash": "''' + str(bloco.prevhash) + '",' + '''"hash": "''' + str(bloco.hash) + '"' + '}}'
-            bloco = json.dumps({"index":bloco.index, "nonce":bloco.nonce, "tstamp":bloco.tstamp, "isVoto": bloco.isVoto, "dados":bloco.dados, "prev_hash":bloco.prevhash, "hash":bloco.hash})   
-            lista.append(bloco)     
-        if len(lista) >= 1: 
-            chain = '{ "bloco": [' + lista[0]
+            #bloco = json.dumps({"index":bloco.index, "nonce":bloco.nonce, "tstamp":bloco.tstamp, "isVoto": bloco.isVoto, "dados":bloco.dados, "prev_hash":bloco.prevhash, "hash":bloco.hash})   
+            lista.append({"index":bloco.index, "nonce":bloco.nonce, "tstamp":bloco.tstamp, "isVoto": bloco.isVoto, "dados":bloco.dados, "prev_hash":bloco.prevhash, "hash":bloco.hash})     
+        #if len(lista) >= 1: 
+        #    chain = '{ "bloco": [' + lista[0]
 
-        i = len(lista)
-        x=1
+        #i = len(lista)
+        #x=1
 
-        if len(lista) > 1: 
-            chain += ","
-            while x < i-1:
-                chain +=  lista[x] + ","
-                x+=1
-            chain += lista[x] 
-            #chain = json.dumps(chain)
+        #if len(lista) > 1: 
+        #    chain += ","
+        #    while x < i-1:
+        #        chain +=  lista[x] + ","
+        #        x+=1
+        #    chain += lista[x] 
+        #    #chain = json.dumps(chain)
 
-        chain += "]}"
-        return chain
+        #chain += "]}"
+        return json.dumps(lista)
 
     def get_chain_size(self): # obter o tamanho da cadeia de blocos sem contar o bloco gênesis
         return len(self.chain)-1
@@ -257,7 +257,7 @@ uri = daemon.register(blockchain) #instanciando um objeto remoto, realizando o r
 
 # para poder utilizar deve estar sendo executado o pyro-ns em um terminal
 ns = Pyro4.locateNS() # Get a proxy for a name server somewhere in the network.
-ns.register('obj', uri) # simplificando o nome do objeto
+ns.register('blockchain', uri) # simplificando o nome do objeto
 
 print(uri)
 
