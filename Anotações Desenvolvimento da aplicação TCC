@@ -1,0 +1,76 @@
+||| Anotações TCC - Desenvolvimento da Aplicação |||
+----------------------------------------------------
+Primeiramente foi criado, o modelo do usuário, sua view, configurações de URLs, etc. 
+Deve ser usado o comando para realizar a migração para o banco :
+python3 manage.py makemigrations
+python3 manage.py migrate
+----------------------------------------------------																	TCC
+Criar o modelo lógico da base de dados -
+Desenvolver o CRUD de Cursos -
+Desenvolver o CRUD de Usuários -
+Desenvolver o CRUD de Eleições -
+Desenvolver o CRUD de tabelas intermediárias entre eleições, candidatos e eleitores -
+Fazer o Controle de sessões -
+Fazer o Controle de sessões filtrando por tipos de permissões e tipo de usuários
+Criação de chaves
+Criação da tela para votação -
+Gerar blocos para cada eleição e uma cadeia que represente os votos dos participantes, armazenando apenas a chave se cada candiadato votou ou não e adicionando um novo voto de bloco na cadeia
+Criação de servidores secundários para funcionarem como mineradores
+Garantir que a aplicação seja responsiva -
+
+OBS: Devem ser realizadas anotações mais detalhadas sobre a implementação (utilizar os diversos comentários distribuídos pela documentação da aplicação)
+
+
+------------------------------
+           BLOCO x
+------------------------------
+index: x
+nonce: 6444
+tstamp: 31/Mar/2020-06:01:32
+eleição_pk: 1
+eleitor_pk: 6
+candidato_pk: 4  ---> deve ser estudado o uso da chave privada do eleitor para codificar em quem ele votou, porém deve ser utilizado outra chain para armazenar o somatório de votos de cada candidato em cada eleição
+
+enviar acrescimo de valor para candidatos
+prev_hash: 00009ea696df28946a6a9e59307b85b13e61408708496753514292bcb0a49d75
+hash: 000066fc087d47f858813972233b0c1c9e1d415db04b28fd3021918b4134b406
+------------------------------
+
+
+A chave privada será armazenada codificada e decodificada com java script no lado client, será armazenado apenas uma cifração da chave no banco, assim garantindo que o servidor não tenha a chave privada do usuário.
+
+Criar uma tela para votação, permitir que quando os eleitores estiverem logados, tenha uma tela para verificar as eleições que ele está participando e verificar quais candidatos ele pode votar.
+
+Utilizar REST -> utilizar para realizar testes com vários clientes 
+Criar um novo APP para ser utilizado para os serviços de blockchain, além de suas rotas, assim preparando todas as view para acessar o nosso serviço via REST
+
+#!/bin/bash
+. ${HOMEDIR}/authn
+curl -s -k -X GET –header Content-Type: application/json’ \
+        –header ‘Accept: application/json’  \
+        “${AUTHN}” \
+        “https://${HOST}${PORT}”/<<BASEURL>>/<<ENDPOINTSPECIFIC>>”
+
+Templates and JSON Files.
+The create operation of a REST API usually takes a JSON input to hold the attributes of the object. Instead of attempting to use a program that accepts parameters to construct the JSON data on the fly, it is actually more appropriate to set aside commonly used templates to save the users from having to specify all those attributes. These templates could include both simple objects and more complicated relationships.
+
+A template could simply be a shell script that takes parameters and uses the echo command to help deliver the desired JSON data. A minimal example could look like:
+
+#!/bin/bash
+Name=$1
+echo <<EOF
+{
+    “Name”: “$Name”
+}
+EOF
+
+You may also want to set aside fixed JSON files that you use repeatedly.
+
+
+--> falta resolver o problema de votos simultâneos 
+--> estudar como utilizar diversos objetos remotos para a mineração -> pode ser disponibilizado apenas um trecho de código para os mineradores da rede, além do conteúdo do bloco, assim, o minerador terá de encontrar o nonce adequado e avisar o objeto remoto da chain, o objeto remoto teá um método apenas para verificar se o nonce está correto, caso sim, ele atualiza a chain com o blo minerado.
+--> realizar controle de duração das votações --> no próprio sistema --> quando a data limite for atingida os usuário só poderão ter acesso a quem eles votaram e ao somatório total de votos
+--> concluir os controles de permissões em todos as views e templates
+
+
+

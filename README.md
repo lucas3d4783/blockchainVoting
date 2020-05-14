@@ -31,9 +31,21 @@ Em outro terminal deve ser executado o comando ...... para a criação de uma bl
 # Algumas Telas do Sistema
 ## Desktop
 <div align="center" style="padding='3%'">
-  <img src="prints/3.png" class="img-fluid" style="" width="95%">
-  <img src="prints/4.png" class="img-fluid" width="95%">
+  <img src="prints/1.png" class="img-fluid" style="" width="95%">
+  <img src="prints/2.png" class="img-fluid" width="95%">
+  <img src="prints/3.png" class="img-fluid" width="95%">
+  <img src="prints/4.png" class="img-fluid" style="" width="95%">
   <img src="prints/5.png" class="img-fluid" width="95%">
+  <img src="prints/6.png" class="img-fluid" width="95%">
+  <img src="prints/7.png" class="img-fluid" style="" width="95%">
+  <img src="prints/8.png" class="img-fluid" width="95%">
+  <img src="prints/9.png" class="img-fluid" width="95%">
+  <img src="prints/10.png" class="img-fluid" style="" width="95%">
+  <img src="prints/11.png" class="img-fluid" width="95%">
+  <img src="prints/12.png" class="img-fluid" width="95%">
+  <img src="prints/13.png" class="img-fluid" style="" width="95%">
+  <img src="prints/14.png" class="img-fluid" width="95%">
+  <img src="prints/15.png" class="img-fluid" width="95%">
 </div>
 
 ## Mobile

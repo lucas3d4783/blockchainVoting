@@ -10,7 +10,7 @@
         <form method="POST" class="post-form">{% csrf_token %}
           
             <!-- exemplo para testar objeto json:
-            { "destinatário": ["João da Silva", "Lucas Coelho Reichert"], "valor": "R$500,00", "remetente": "Joana da Rosa", "teste": { "destinatário": ["João da Silva", "Lucas Coelho Reichert"], "valor": "R$500,00", "remetente": { "destinatário": ["João da Silva", "Lucas Coelho Reichert"], "valor": "R$500,00", "remetente": [1,2,2,3,4,5,6,"kfdjasl"]}}, "teste": "teste" } -->
+                 -->
             <div class="form-group">
                 <label for='dados'>Digite um objeto no formato JSON (teste a sintaxe do objeto para liberar o botão Adicionar): </label>
                 <textarea onclick="desativarBt()" onfocus="desativarBt()" onblur="desativarBt()" class="form-control" id="dados" name="dados" value="" placeholder='Ex: { "destinatário": ["João da Silva", "Lucas Coelho Reichert"], "valor": "R$500,00", "remetente": "Joana da Rosa"}' rows="6">

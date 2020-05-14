@@ -1,9 +1,12 @@
+# utilizado  antes do objetivo do trabalho ser alterado, quando o sitema de blockchain era integrado com o de votação
+
 import hashlib
 import json
 import datetime
 import Pyro4 #biblioteca para a utilização de objetos remotos
 from pytz import timezone
 import threading
+import pickle
 
 class Voto(): #objeto que deve funcionar como uma matriz dinâmica para armazenar os votos
     def __init__(self, eleicao_pk, candidato_pk):
@@ -11,26 +14,24 @@ class Voto(): #objeto que deve funcionar como uma matriz dinâmica para armazena
         self.candidato_pk=candidato_pk
         self.votos=1
 
-
 #primeiramente deve ser definido o bloco
 class Block(): # classe utilizada para a criação e manipulação de cada bloco de forma individual
     #construtor do bloco
-    def __init__(self, index=0, eleicao_pk=-1, eleitor_pk=-1, candidato_pk=-1, prevhash='Genesis Block', nonce=0): #quando não temos um bloco anterior, definimos ele como uma string vazia (valor default)
+    def __init__(self, index=0, dados='{"Genesis Block":"Genesis Block"}', prevhash='{"Genesis Block":"Genesis Block"}', nonce=0): #quando não temos um bloco anterior, definimos ele como uma string vazia (valor default)
         #variáveis da classe
-        self.index=index
-        self.nonce=nonce
-        #self.tstamp=str(datetime.datetime.now().astimezone(timezone('America/Sao_Paulo')).strftime("%d/%b/%Y-%H:%M:%S"))
-        self.tstamp=str(datetime.datetime.now().astimezone(timezone('America/Sao_Paulo')).strftime("%Y-%m-%d-%H:%M-%s"))
-        self.eleicao_pk=eleicao_pk
-        self.eleitor_pk=eleitor_pk
-        self.candidato_pk=candidato_pk
-        self.prevhash=prevhash
-        self.hash=self.calcHash()
+        self.index=index # index do bloco
+        self.nonce=nonce # resposta do desafio para minerar o bloco
+        #self.tstamp=str(datetime.datetime.now().astimezone(timezone('America/Sao_Paulo')).strftime("%Y-%m-%d-%H:%M-%s")) # quando o bloco foi criado
+        self.tstamp=str(datetime.datetime.now().astimezone(timezone('America/Sao_Paulo')).strftime("%s")) # quando o bloco foi criado
+        self.isVoto=True # flag para identificar se o bloco corresponde a um voto do sistema de votação ou não 
+        self.dados=dados # dados que serão armazenados em formato JSON no bloco
+        self.prevhash=prevhash # hash do bloco anterior
+        self.hash=self.calcHash() # hash do bloco atual 
 
     #função responsável por realizar o cálculo do hash do bloco
     def calcHash(self):
         #criando um dicionário com json, passando parâmetro por parâmetro, por fim, codificando para gerar o hash posteriormente
-        block_string=json.dumps({"index":self.index, "nonce":self.nonce, "tstamp":self.tstamp, "eleicao_pk":self.eleicao_pk, "eleitor_pk":self.eleitor_pk, "candidato_pk":self.candidato_pk, "prevhash":self.prevhash,}, sort_keys=True, ).encode()
+        block_string=json.dumps({"index":self.index, "nonce":self.nonce, "tstamp":self.tstamp, "isVoto": self.isVoto, "dados":self.dados, "prevhash":self.prevhash,}, sort_keys=True, ).encode()
         #retornando o hash do bloco
         return hashlib.sha256(block_string).hexdigest()
     def mineBlock(self, diffic): # método utilizado para encontrar um hash com um determinado número de zeros no início (dificuldade)
@@ -45,17 +46,13 @@ class Block(): # classe utilizada para a criação e manipulação de cada bloco
         bloco += "\nindex: " + str(self.index) 
         bloco += "\nnonce: " + str(self.nonce)
         bloco += "\ntstamp: " + str(self.tstamp)
-        bloco += "\neleição_pk: " + str(self.eleicao_pk)
-        bloco += "\neleitor_pk: " + str(self.eleitor_pk)
-        bloco += "\ncandidato_pk: " + str(self.candidato_pk)
+        bloco += "\n\n ---> DADOS"
+        bloco += "\n" + str(self.dados)
+        bloco += "\n <--- \n"
         bloco += "\nprev_hash: " + str(self.prevhash)
         bloco += "\nhash: " + str(self.hash)
         bloco += "\n------------------------------"
         return bloco
-
-#geração de um bloco para teste
-#bblock=Block(1, '19/03/2020', 100)
-#print(bblock)
 
 
 @Pyro4.expose
@@ -68,7 +65,9 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
         #print(type(self.chain))
         #print(type(self))
     def generateGenesisBlock(self): #método para a criação de um bloco gênesis
-        return Block(0, 'Genesis Block', 'Genesis Block', 'Genesis Block') #retorna um bloco gênesis
+        bloco = Block(0)
+        bloco.isVoto = False #para evitar erros de chaves nos dados
+        return bloco #retorna um bloco gênesis
     
     def getLastBlock(self): #método para obter o último bloco da cadeia
         return self.chain[-1] #pega o último elemento da lista
@@ -79,6 +78,9 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
         #newBlock.hash=newBlock.calcHash() #calculando o hash do novo bloco
         #aplicar semaforos no método
         self.chain.append(newBlock) #adicionando o bloco novo na chain (lista da classe Blockchain)
+        print(self.getChain())
+        #print("STATUS da Chain: ", self.isChainValid())
+        #print("QUANTIDADE de BLOCOS: ", self.get_chain_size())
     
     def isChainValid(self): # Método para verificar de a cadeia de blocos é válida
         for i in range(1, len(self.chain)): # varrendo os blocos da lista, exceto o bloco gênesis
@@ -93,12 +95,12 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
         return True
 
     def synchronized(func):
-        print(type(func))
+        #print(type(func))
         func.__lock__ = threading.Lock()
             
         def synced_func(*args, **kws):
             with func.__lock__:
-                print("tipo: ", type(func(*args, **kws)))
+                #print("tipo: ", type(func(*args, **kws)))
                 return func(*args, **kws)
         
         return synced_func
@@ -106,15 +108,40 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
     @synchronized
     def criarBloco(self, eleicao_pk, eleitor_pk, candidato_pk):
         index = len(self.chain)
-        bloco = Block(index, eleicao_pk, eleitor_pk, candidato_pk) # criando um bloco 
-        if not (self.verificaSeJaVotou(eleicao_pk, eleitor_pk)): # sem o teste estava adicionando dois blocos
-            #fazer o lock na chain
-            #fazer ficar esperando 
-            self.addBlock(bloco) # adicionando o bloco na chain
-            self.incrementarVotos(eleicao_pk, candidato_pk)
-            return True
-        else:
+        try:
+            # criando objeto json partindo de um Python object (dict) para passar para o bloco 
+            dados_string = json.dumps({
+                "eleicao_pk": eleicao_pk, 
+                "eleitor_pk": eleitor_pk, 
+                "candidato_pk": candidato_pk})
+
+            bloco = Block(index, dados_string) # criando um bloco 
+
+            if not (self.verificaSeJaVotou(eleicao_pk, eleitor_pk)): # sem o teste estava adicionando dois blocos
+                #fazer o lock na chain
+                #fazer ficar esperando 
+                self.addBlock(bloco) # adicionando o bloco na chain
+                self.incrementarVotos(eleicao_pk, candidato_pk)
+                return True
+        except json.decoder.JSONDecodeError: # caso o tipo de dado informado não possa ser convertido para json, vai ser retornado False 
+            print("Não foi possível criar um bloco, pois o tipo de dado informado não é válido")
             return False
+
+        return False
+    
+    @synchronized
+    def criarBlocoGenerico(self, objJson):
+        index = len(self.chain)
+        try:
+            d = json.loads(objJson) # tentando converter o objeto passado como parâmetro para um objeto python
+        except json.decoder.JSONDecodeError: # caso o tipo de dado informado não possa ser convertido para json, vai ser retornado False 
+            print("Não foi possível criar um bloco genérico, pois o tipo de dado informado não é válido")
+            return False
+
+        bloco = Block(index, objJson) # criando um bloco 
+        bloco.isVoto = False
+        self.addBlock(bloco) # adicionando o bloco na chain
+        return True
     
     
     @synchronized
@@ -140,19 +167,31 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
         for bloco in self.chain: #varrer a cadeia de blocos
             result+="\n------------------------------\n"
             result+="           BLOCO " + str(bloco.index) + "\n"
-            result+=bloco.__str__() # mostrando as informações do respectivo bloco
+            result+=bloco.__str__() + "\n" # mostrando as informações do respectivo bloco
             #count+=1 # incrementando o contador de blocos
         return result;
         #print("Estado do sistema: ", self.isChainValid()) #verifica a integridade dos blocos e da chain
     
+    def getChainJson(self):
+        lista = []
+        for bloco in self.chain:
+            lista.append({"index":bloco.index, "nonce":bloco.nonce, "tstamp":bloco.tstamp, "isVoto": bloco.isVoto, "dados":bloco.dados, "prev_hash":bloco.prevhash, "hash":bloco.hash})
+        return json.dumps(lista)
+
     def get_chain_size(self): # obter o tamanho da cadeia de blocos sem contar o bloco gênesis
         return len(self.chain)-1
     
     def verificaSeJaVotou(self, eleicao_pk, eleitor_pk):
         for bloco in self.chain:
-            if (str(bloco.eleitor_pk) == str(eleitor_pk)) and (str(bloco.eleicao_pk) == str(eleicao_pk)):
-                return True
+            if bloco.isVoto : # verifica se o bloco é referente a algum processo eleitoral
+                try:
+                    dados = json.loads(bloco.dados) # decodificando objeto json para um objeto python
+                    if (str(dados["eleitor_pk"]) == str(eleitor_pk)) and (str(dados["eleicao_pk"]) == str(eleicao_pk)):
+                        return True
+                except json.decoder.JSONDecodeError: # "unsupported serialized class: json.decoder.JSONDecodeError"
+                    print("os dados informados não correspondem a um formato json")
         return False
+            
     
 
 #geração de uma blockchain para teste
@@ -195,7 +234,7 @@ uri = daemon.register(blockchain) #instanciando um objeto remoto, realizando o r
 
 # para poder utilizar deve estar sendo executado o pyro-ns em um terminal
 ns = Pyro4.locateNS() # Get a proxy for a name server somewhere in the network.
-ns.register('obj', uri) # simplificando o nome do objeto
+ns.register('blockchain', uri) # simplificando o nome do objeto
 
 print(uri)
 
