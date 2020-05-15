@@ -16,9 +16,9 @@ app = Flask(__name__)
 
 #GET
 # curl com requisição com método GET:
-# curl http://127.0.0.1:8001/blockchain 
+# curl http://127.0.0.1:8001/blocos 
 # também pode ser usado o comando jq para formatar o objeto json:
-# curl http://127.0.0.1:8001/blockchain | jq
+# curl http://127.0.0.1:8001/blocos | jq
 #@app.route('/', methods=['GET']) # o GET já é por padrão se nada for informado
 @app.route('/') # então não foi informado, só que vai ser o rota padrão
 def home():

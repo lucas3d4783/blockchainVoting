@@ -1,5 +1,4 @@
 # utilizado  antes do objetivo do trabalho ser alterado, quando o sitema de blockchain era integrado com o de votação
-
 import hashlib
 import json
 import datetime
