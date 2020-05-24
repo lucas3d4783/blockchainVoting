@@ -10,19 +10,22 @@
             <div class="btn btn-block"></div><h2>Cadeia de Blocos do Sistema</h2>
             <p style="color: firebrick;">STATUS do Sistema: {{status}} <br>Nº de Blocos: {{n_blocos}}</p></div>
             {% if chain %}
-                {% for bloco in chain %}      
-                    <a style="padding: 0.5%; max-width: 345px; width: 345px; margin-top: 1.5%; margin-left: 1.5%;" class="btn btn-success"><p><div> 
-                        <div class="btn btn-dark btn-block">Bloco {{bloco.index}}</div>
-                        <div style="padding: 0.1%; " class="btn btn-secondary btn-block">
-                            <!--<b>Index:</b> {{bloco.index}}<br>-->
-                            <br><b>Nonce: </b> {{bloco.nonce}} <hr>
-                            <b>Timestamp</b><p style="font-size: 14px">{{bloco.tstamp}}</p><hr>
-                            <b>DADOS</b><br><p style="font-size: 12px">{{bloco.dados}}</p><hr>
-                            <b>Prévio Hash</b><p style="font-size: 9px">{{bloco.prev_hash}}</p>
-                            <b>Hash</b><br><p style="font-size: 9px">{{bloco.hash}}</p>
-                        </div>
-                    </div></p></a>
-                {% endfor %}
+                <div class="text-center">
+                    {% for bloco in chain %}      
+                        <a style="padding: 0.5%; max-width: 345px; width: 345px; margin-top: 1.5%; margin-left: 1.5%;" class="btn btn-success"><p><div> 
+                            <div class="btn btn-dark btn-block">Bloco {{bloco.index}}</div>
+                            <div style="padding: 0.1%; " class="btn btn-secondary btn-block">
+                                <!--<b>Index:</b> {{bloco.index}}<br>-->
+                                <br><b>Nonce: </b> {{bloco.nonce}} <hr>
+                                <b>Timestamp</b><p style="font-size: 14px">{{bloco.tstamp}}</p><hr>
+                                <b>DADOS</b><br><p style="font-size: 12px">{{bloco.dados}}</p><hr>
+                                <b>Prévio Hash</b><p style="font-size: 9px">{{bloco.prev_hash}}</p>
+                                <b>Hash</b><br><p style="font-size: 9px">{{bloco.hash}}</p>
+                            </div>
+                        </div></p></a>
+                    {% endfor %}
+                </div>
+                
             {% endif %}
         
             <script>

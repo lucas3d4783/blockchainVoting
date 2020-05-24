@@ -4,7 +4,7 @@ import Pyro4
 from unicodedata import normalize
 
 # RESUMO
-#Desenvolvi uma API web em Python com o framework Flask, visando disponibilizar métodos de consulta e inserção na blockchain, 
+#Desenvolvi uma API REST web em Python com o framework Flask, visando disponibilizar métodos de consulta e inserção na blockchain, 
 #via requisições web (assim permitindo o uso do curl para as requisições).
 #Criei um método para consultar todos os blocos (requisição GET para http://127.0.0.1:8001/blocos), um para filtrar os blocos 
 #e só mostrar o bloco que tem um determinado index [requisição GET para http://127.0.0.1:8001/blocos/x (x sendo um inteiro)], 

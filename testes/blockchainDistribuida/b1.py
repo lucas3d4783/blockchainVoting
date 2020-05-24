@@ -5,6 +5,47 @@ import Pyro4 #biblioteca para a utilização de objetos remotos
 from pytz import timezone
 import threading
 import pickle
+import threading # foi optado por usar Threads e não forks para não vincular a execução do programa a um sistema operacional específico, neste caso linux ou mac, pois eles possuem o recursos os.fork por serem baseados em Unix
+# além disso a bilioteca threading tem um desempenho melho do que a biblioteca __thread 
+
+
+atual = 'b1' # nó atual
+#nos = ['b1', 'b2', 'b3', 'b4'] # lista de blocos do sistema
+nos = ['b1', 'b2', 'b3'] # lista de blocos do sistema
+
+
+class Minhathread(threading.Thread): # chamar os outros  nós da rede, um em cada thread
+    achou_nonce = False
+    def __init__(self, bloco, no, mutex):
+        self.bloco = bloco
+        self.no = no
+        self.mutex = mutex
+        threading.Thread.__init__(self)
+
+    def run(self):
+        #with self.mutex: # para evitar que mais de uma thread use o print ao mesmo tempo   
+            ns = Pyro4.locateNS() # localizando o servidor de nomes
+            uri = ns.lookup(self.no) # obtendo a uri do objeto remoto
+            o = Pyro4.Proxy(uri) #pegando o objeto remoto
+
+            b = {"index":self.bloco.index, "nonce":self.bloco.nonce, "tstamp":self.bloco.tstamp, "dados":self.bloco.dados, "prevhash":self.bloco.prevhash, "hash":self.bloco.hash}
+
+            #b = {"index":self.bloco.index, "nonce":self.bloco.nonce, "tstamp":self.bloco.tstamp, "dados":"teste", "prevhash":"teste", "hash":self.bloco.hash}
+            bloco = json.dumps(b)
+            #print(bloco.__str__())
+
+            print("enviado bloco para o nó ", self.no) # printando qual bloco está sendo enviado para qual nó da rede 
+
+            retorno = o.consenso(bloco) # enviando o bloco serelizado para objeto remoto minerar 
+
+            if Minhathread.achou_nonce == False:
+                Minhathread.achou_nonce = retorno
+                print("O nó ", self.no, " encontrou o nonce primeiro: ", str(Minhathread.achou_nonce))
+           
+            print("O nó ", self.no, " encontrou o nonce: ", str(retorno))
+
+    print('Saindo da Thread Principal')
+
 
 #primeiramente deve ser definido o bloco
 class Block(): # classe utilizada para a criação e manipulação de cada bloco de forma individual
@@ -14,6 +55,7 @@ class Block(): # classe utilizada para a criação e manipulação de cada bloco
         self.index=index # index do bloco
         self.nonce=nonce # resposta do desafio para minerar o bloco
         self.tstamp=str(datetime.datetime.now().astimezone(timezone('America/Sao_Paulo')).strftime("%s")) # quando o bloco foi criado, para poder realizar comparações posteriores         self.dados=dados # dados que serão armazenados em formato JSON no bloco
+        self.dados=dados
         self.prevhash=prevhash # hash do bloco anterior
         self.hash=self.calcHash() # hash do bloco atual 
 
@@ -48,12 +90,16 @@ class Block(): # classe utilizada para a criação e manipulação de cada bloco
 # após criar a classe referente aos blocos, deve ser criado a classe que vai representar a cadeia de blocos
 class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cadeia de blocos
     def __init__(self): #função construct da classe
+        self.unconfirmed_transactions = []
         self.chain=[self.generateGenesisBlock(),] #criando a lista que será utilizada para armazenar os blocos, além de adicionar o bloco gênesis
         self.difficulty=4 # definindo a dificuldade da mineração - quanto maior o valor, mais tempo para minerar
-        #print(type(self.chain))
-        #print(type(self))
+        bloco = Block() # criando um bloco genérico para enviar para os nós e testar a chain
+        self.enviar_para_os_nos(bloco) # para testes ao iniciar a chain
+
     def generateGenesisBlock(self): #método para a criação de um bloco gênesis
         bloco = Block(0)
+        bloco.tstamp = 0 # modificando o tstamp para que todos os blocos da rede tenham o mesmo bloco gênesis
+
         return bloco #retorna um bloco gênesis
     
     def getLastBlock(self): #método para obter o último bloco da cadeia
@@ -62,12 +108,9 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
     def addBlock(self, newBlock): #adicionar novo bloco na cadeia, passando o novo bloco como parâmetro
         newBlock.prevhash=self.getLastBlock().hash # definindo o atributo 'prevhash' como o hash do último bloco da cadeia de blocos
         newBlock.mineBlock(self.difficulty) #calculando o hash do novo bloco
-        #newBlock.hash=newBlock.calcHash() #calculando o hash do novo bloco
         #aplicar semaforos no método
         self.chain.append(newBlock) #adicionando o bloco novo na chain (lista da classe Blockchain)
         print(self.getChain())
-        #print("STATUS da Chain: ", self.isChainValid())
-        #print("QUANTIDADE de BLOCOS: ", self.get_chain_size())
     
     def isChainValid(self): # Método para verificar de a cadeia de blocos é válida
         for i in range(1, len(self.chain)): # varrendo os blocos da lista, exceto o bloco gênesis
@@ -82,12 +125,10 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
         return True
 
     def synchronized(func):
-        #print(type(func))
         func.__lock__ = threading.Lock()
             
         def synced_func(*args, **kws):
             with func.__lock__:
-                #print("tipo: ", type(func(*args, **kws)))
                 return func(*args, **kws)
         
         return synced_func
@@ -102,29 +143,84 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
             return False
 
         bloco = Block(index, objJson) # criando um bloco 
+
         self.addBlock(bloco) # adicionando o bloco na chain
         return True
     
     def getChain(self):
-        #count = 0 # criando um contador para os blocos
         result = "";
         for bloco in self.chain: #varrer a cadeia de blocos
             result+="\n------------------------------\n"
             result+="           BLOCO " + str(bloco.index) + "\n"
             result+=bloco.__str__() + "\n" # mostrando as informações do respectivo bloco
-            #count+=1 # incrementando o contador de blocos
+
         return result;
         #print("Estado do sistema: ", self.isChainValid()) #verifica a integridade dos blocos e da chain
     
     def getChainJson(self):
         lista = []
         for bloco in self.chain:
-            lista.append({"index":bloco.index, "nonce":bloco.nonce, "tstamp":bloco.tstamp, "dados":bloco.dados, "prev_hash":bloco.prevhash, "hash":bloco.hash})
+            lista.append({"index":bloco.index, "nonce":bloco.nonce, "tstamp":bloco.tstamp, "dados":bloco.dados, "prevhash":bloco.prevhash, "hash":bloco.hash})
         return json.dumps(lista)
 
     def get_chain_size(self): # obter o tamanho da cadeia de blocos sem contar o bloco gênesis
         return len(self.chain)-1
     
+    # MÉTODOS PARA APLICAR DE FORMA DISTRIBUÍDA 
+
+    def enviar_para_os_nos(self, bloco): # chamada remota para os outros nós da rede em diferentes threads
+        stdoutmutex = threading.Lock()
+        threads = []
+        
+        for no in nos:
+            if no != atual: # verifica se o objeto não tem o mesmo nome do objeto atual    
+                thread = Minhathread(bloco, no, stdoutmutex)
+                thread.start() # método da classe pai, dar iniciar a thread, vai criar operações básicas para poder usar 
+                threads.append(thread)
+
+        #for thread in threads:
+        #    print('executando a Thread')
+        #    thread.join() # método da classe pai, este método espera até a threading terminar quando ela teminar ele executa o print
+    
+        print("enviou para os nós")
+
+        return True
+    
+    def consenso(self, bloco):
+        #bloco = json.loads(bloco)
+        #self.add_new_transaction(bloco) #desserializando o objeto e convertendo ele para python
+
+        #bloco.prevhash=self.getLastBlock().hash
+        #bloco.mineBlock(self.difficulty)
+        
+        #return bloco.nonce
+        #self.chain.append(newBlock)
+
+        print("recebeu dos outros nós")
+        return True
+
+    def is_valid_proof(self, block, block_hash):
+        return (block_hash.startswith('0' * self.difficulty) and block_hash == block.compute_hash())
+
+    def add_new_transaction(self, bloco):
+        self.unconfirmed_transactions.append(bloco)
+
+
+
+ 
+    #def mine(self):
+    #    if not self.unconfirmed_transactions:
+    #        return False
+ 
+    #    last_block = self.getLastBlock()
+ 
+    #    new_block = Block()
+ 
+    #    proof = self.proof_of_work(new_block)
+    #    self.add_block(new_block, proof)
+    #    self.unconfirmed_transactions = []
+    #    return new_block.index
+
 
 
 # para adicionar um bloco da forma original, pode ser considerado muito fácil, porém se for muito fácil adiconar um novo bloco
@@ -146,7 +242,7 @@ uri = daemon.register(blockchain) #instanciando um objeto remoto, realizando o r
 
 # para poder utilizar deve estar sendo executado o pyro-ns em um terminal
 ns = Pyro4.locateNS() # Get a proxy for a name server somewhere in the network.
-ns.register('blockchain', uri) # simplificando o nome do objeto
+ns.register('b1', uri) # simplificando o nome do objeto
 
 print(uri)
 
