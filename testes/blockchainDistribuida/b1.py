@@ -11,10 +11,10 @@ import threading # foi optado por usar Threads e não forks para não vincular a
 
 atual = 'b1' # nó atual
 #nos = ['b1', 'b2', 'b3', 'b4'] # lista de blocos do sistema
-nos = ['b1', 'b2', 'b3'] # lista de blocos do sistema
+nos = ['b1', 'b2'] # lista de blocos do sistema
 
 
-class Minhathread(threading.Thread): # chamar os outros  nós da rede, um em cada thread
+class Envia_bloco_para_todos_os_nos(threading.Thread): # enviar bloco para os outros nós da rede, um em cada thread
     achou_nonce = False
     def __init__(self, bloco, no, mutex):
         self.bloco = bloco
@@ -38,11 +38,45 @@ class Minhathread(threading.Thread): # chamar os outros  nós da rede, um em cad
 
             retorno = o.consenso(bloco) # enviando o bloco serelizado para objeto remoto minerar 
 
-            if Minhathread.achou_nonce == False:
-                Minhathread.achou_nonce = retorno
-                print("O nó ", self.no, " encontrou o nonce primeiro: ", str(Minhathread.achou_nonce))
+            if Envia_bloco_para_todos_os_nos.achou_nonce == False:
+                Envia_bloco_para_todos_os_nos.achou_nonce = retorno
+                #print("O nó ", self.no, " encontrou o nonce primeiro: ", str(Envia_bloco_para_todos_os_nos.achou_nonce))
+
+                stdoutmutex = threading.Lock()
+                threads = []
+                for no in nos:
+                    if no != atual: # verifica se o objeto não tem o mesmo nome do objeto atual    
+                        thread = Envia_nonce_para_todos_os_nos(Envia_bloco_para_todos_os_nos.achou_nonce, no, stdoutmutex)
+                        thread.start() # método da classe pai, dar iniciar a thread, vai criar operações básicas para poder usar 
+                        threads.append(thread)
+                #Envia_bloco_para_todos_os_nos.achou_nonce = False
+
+
            
             print("O nó ", self.no, " encontrou o nonce: ", str(retorno))
+
+    print('Saindo da Thread Principal')
+
+class Envia_nonce_para_todos_os_nos(threading.Thread): # enviar nonce de um bloco para os outros nós da rede, um em cada thread
+    def __init__(self, nonce, no, mutex):
+        self.nonce = nonce
+        self.no = no
+        self.mutex = mutex
+        threading.Thread.__init__(self)
+
+    def run(self):
+        #with self.mutex: # para evitar que mais de uma thread use o print ao mesmo tempo   
+            ns = Pyro4.locateNS() # localizando o servidor de nomes
+            uri = ns.lookup(self.no) # obtendo a uri do objeto remoto
+            o = Pyro4.Proxy(uri) #pegando o objeto remoto
+
+            print("enviado nonce para o nó ", self.no) # printando o nó da rede
+
+            retorno = o.verificaNonce(self.nonce) # enviando o nonce para verificalção
+           
+            print("O nó ", self.no, " retornou o STATUS: ", str(retorno))
+
+
 
     print('Saindo da Thread Principal')
 
@@ -94,7 +128,7 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
         self.chain=[self.generateGenesisBlock(),] #criando a lista que será utilizada para armazenar os blocos, além de adicionar o bloco gênesis
         self.difficulty=4 # definindo a dificuldade da mineração - quanto maior o valor, mais tempo para minerar
         bloco = Block() # criando um bloco genérico para enviar para os nós e testar a chain
-        self.enviar_para_os_nos(bloco) # para testes ao iniciar a chain
+        self.enviar_bloco_para_os_nos(bloco) # para testes ao iniciar a chain
 
     def generateGenesisBlock(self): #método para a criação de um bloco gênesis
         bloco = Block(0)
@@ -168,21 +202,24 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
     
     # MÉTODOS PARA APLICAR DE FORMA DISTRIBUÍDA 
 
-    def enviar_para_os_nos(self, bloco): # chamada remota para os outros nós da rede em diferentes threads
+    def enviar_bloco_para_os_nos(self, bloco): # chamada remota para os outros nós da rede em diferentes threads
         stdoutmutex = threading.Lock()
         threads = []
         
-        for no in nos:
+        for no in nos: # enviando o bloco para os nós
             if no != atual: # verifica se o objeto não tem o mesmo nome do objeto atual    
-                thread = Minhathread(bloco, no, stdoutmutex)
+                thread = Envia_bloco_para_todos_os_nos(bloco, no, stdoutmutex)
                 thread.start() # método da classe pai, dar iniciar a thread, vai criar operações básicas para poder usar 
                 threads.append(thread)
+        print("enviou o bloco para os nós...")
+
+
 
         #for thread in threads:
         #    print('executando a Thread')
         #    thread.join() # método da classe pai, este método espera até a threading terminar quando ela teminar ele executa o print
     
-        print("enviou para os nós")
+        
 
         return True
     

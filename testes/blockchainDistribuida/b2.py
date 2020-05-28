@@ -27,12 +27,20 @@ class Block(): # classe utilizada para a criação e manipulação de cada bloco
         block_string = block_string.encode()
         #retornando o hash do bloco
         return hashlib.sha256(block_string).hexdigest()
-    def mineBlock(self, diffic): # método utilizado para encontrar um hash com um determinado número de zeros no início (dificuldade)
-        self.nonce = 0
-        while(self.hash[:diffic] != str('').zfill(diffic)): # enquanto a o inicio do hash do bloco até a dificuldade -1 não for igual a uma string que tenha o mesmo números de zeros que a dificuldade
-            self.nonce += 1 # incrementando o nonce para gerar um novo hash do bloco (também pode ser realizado de forma aleatória)
-            self.hash=self.calcHash() # gerando um novo hash para o bloco 
-        print("Bloco Minerado! - ", self.hash)
+    def mineBlock(self, diffic, nonce=-1): # método utilizado para encontrar um hash com um determinado número de zeros no início (dificuldade)
+        self.nonce = nonce
+        if self.nonce == -1: # se o nonce não tiver sido passado como parâmetro
+            self.nonce = 0
+            while(self.hash[:diffic] != str('').zfill(diffic)): # enquanto a o inicio do hash do bloco até a dificuldade -1 não for igual a uma string que tenha o mesmo números de zeros que a dificuldade
+                self.nonce += 1 # incrementando o nonce para gerar um novo hash do bloco (também pode ser realizado de forma aleatória)
+                self.hash=self.calcHash() # gerando um novo hash para o bloco 
+            print("Bloco Minerado! - ", self.hash)
+            return True
+        else:
+            self.hash=self.calcHash() # gera o hash do bloco com o nonce informado
+            if self.hash[:diffic] == str('').zfill(diffic): # se tiver suprido o desafio é retornado True caso contrário false
+                return True
+        return False
     
     # método para retornar informações do bloco
     def __str__(self):
@@ -122,6 +130,7 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
             result+="           BLOCO " + str(bloco.index) + "\n"
             result+=bloco.__str__() + "\n" # mostrando as informações do respectivo bloco
             #count+=1 # incrementando o contador de blocos
+        result+="STATUS da Chain: " + str(self.isChainValid()) + "\n"
         return result;
         #print("Estado do sistema: ", self.isChainValid()) #verifica a integridade dos blocos e da chain
     
@@ -149,20 +158,29 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
         bloco = Block(index, b["dados"]) # criando um bloco passando os dados recebidos de outro nó da rede
 
         bloco.tstamp = b["tstamp"] #  colocando o tstamp como tstamp que ele foi enviado para o primeiro bloco
-        #bloco.prevhash=self.getLastBlock().hash # pegando o hash do bloco anterior
-        bloco.prevhash=""
+        bloco.prevhash=self.getLastBlock().hash # pegando o hash do bloco anterior
+    
         bloco.mineBlock(self.difficulty) # minerando o bloco para encontrar o nonce para o desafio, assim será setado o valor o nonce e do hash do bloco
-        self.add_new_transaction(bloco) #desserializando o objeto e convertendo ele para python
+        self.add_new_transaction(bloco) # adicionando o bloco na lista de blocos não confirmados
 
         print("nonce encontrado: ", bloco.nonce) # printando o nonce encontrado
 
-        print(self.getChain())
+        #print(self.getChain())
 
-        print(bloco.__str__())
+        #print(bloco.__str__())
 
         return bloco.nonce # retornando o nonce encontrado para os nós da rede 
 
-    
+    def verificaNonce(self, nonce): # Função para verificar o nonce informado e adicionar o bloco na chain
+        for bloco_n_confirmado in self.unconfirmed_transactions:
+            bloco_n_confirmado.nonce = nonce
+            if bloco_n_confirmado.mineBlock(self.difficulty, nonce): # verifica se o nonce informado está correto 
+                print("Nonce recebido: ", str(nonce))
+                self.chain.append(bloco_n_confirmado)
+                print(self.getChain())
+                self.unconfirmed_transactions = []
+                return True # se sim, retorna verdadeiro
+        return False # caso contrário, retorna falso
 
 
 # para adicionar um bloco da forma original, pode ser considerado muito fácil, porém se for muito fácil adiconar um novo bloco
