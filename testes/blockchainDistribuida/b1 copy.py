@@ -5,9 +5,13 @@ import Pyro4 #biblioteca para a utilização de objetos remotos
 from pytz import timezone
 import threading
 import pickle
+import threading # foi optado por usar Threads e não forks para não vincular a execução do programa a um sistema operacional específico, neste caso linux ou mac, pois eles possuem o recursos os.fork por serem baseados em Unix
+# além disso a bilioteca threading tem um desempenho melho do que a biblioteca __thread 
 
-atual = 'b2' # nó atual
+
+atual = 'b1' # nó atual
 nos = ['b1', 'b2', 'b3'] # lista de blocos do sistema
+
 
 class Envia_bloco_para_todos_os_nos(threading.Thread): # enviar bloco para os outros nós da rede, um em cada thread
     achou_nonce = False
@@ -48,6 +52,8 @@ class Envia_bloco_para_todos_os_nos(threading.Thread): # enviar bloco para os ou
                         threads.append(thread)
                 #Envia_bloco_para_todos_os_nos.achou_nonce = False
                 print("O nó ", self.no, " encontrou o nonce primeiro: ", str(retorno))
+
+
            
             print("O nó ", self.no, " encontrou o nonce: ", str(retorno))
 
@@ -72,7 +78,11 @@ class Envia_nonce_para_todos_os_nos(threading.Thread): # enviar nonce de um bloc
            
             print("O nó ", self.no, " retornou o STATUS: ", str(retorno))
             Envia_bloco_para_todos_os_nos.achou_nonce = False
+
             
+
+
+
     print('Saindo da Thread Principal')
 
 
@@ -91,10 +101,7 @@ class Block(): # classe utilizada para a criação e manipulação de cada bloco
     #função responsável por realizar o cálculo do hash do bloco
     def calcHash(self):
         #criando um dicionário com json, passando parâmetro por parâmetro, por fim, codificando para gerar o hash posteriormente
-        #block_string=json.dumps({"index":self.index, "nonce":self.nonce, "tstamp":self.tstamp, "dados":self.dados, "prevhash":self.prevhash}).encode()
-        block_string = str(self.index) + str(self.nonce) + str(self.tstamp) + str(self.dados) + str(self.prevhash)
-        #block_string = "" + str(self.nonce)
-        block_string = block_string.encode()
+        block_string=json.dumps({"index":self.index, "nonce":self.nonce, "tstamp":self.tstamp, "dados":self.dados, "prevhash":self.prevhash,}, sort_keys=True, ).encode()
         #retornando o hash do bloco
         return hashlib.sha256(block_string).hexdigest()
     def mineBlock(self, diffic, nonce=-1): # método utilizado para encontrar um hash com um determinado número de zeros no início (dificuldade)
@@ -135,13 +142,16 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
         self.difficulty=3 # definindo a dificuldade da mineração - quanto maior o valor, mais tempo para minerar
         self.unconfirmed_transactions = []
         self.chain=[self.generateGenesisBlock(),] #criando a lista que será utilizada para armazenar os blocos, além de adicionar o bloco gênesis
-        
+        bloco = Block()
+        #bloco.dados = '{"lucas":"lucas"}'
+        #self.enviar_bloco_para_os_nos(bloco)
+
     def generateGenesisBlock(self): #método para a criação de um bloco gênesis
         bloco = Block(0)
         bloco.tstamp = 0 # modificando o tstamp para que todos os blocos da rede tenham o mesmo bloco gênesis
         bloco.mineBlock(self.difficulty) # pois foi alterado na linha anterior
         return bloco #retorna um bloco gênesis
-    
+
     def getLastBlock(self): #método para obter o último bloco da cadeia
         return self.chain[-1] #pega o último elemento da lista
     
@@ -164,12 +174,10 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
         return True
 
     def synchronized(func):
-        #print(type(func))
         func.__lock__ = threading.Lock()
             
         def synced_func(*args, **kws):
             with func.__lock__:
-                #print("tipo: ", type(func(*args, **kws)))
                 return func(*args, **kws)
         
         return synced_func
@@ -184,17 +192,19 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
             return False
 
         bloco = Block(index, objJson) # criando um bloco 
+
         self.addBlock(bloco) # adicionando o bloco na chain
         return True
     
     def getChain(self):
-        result = ""
+        result = "";
         for bloco in self.chain: #varrer a cadeia de blocos
             result+="\n------------------------------\n"
             result+="           BLOCO " + str(bloco.index) + "\n"
             result+=bloco.__str__() + "\n" # mostrando as informações do respectivo bloco
-        result+="STATUS da Chain: " + str(self.isChainValid()) + "\n"
-        return result
+
+        return result;
+        #print("Estado do sistema: ", self.isChainValid()) #verifica a integridade dos blocos e da chain
     
     def getChainJson(self):
         lista = []
@@ -204,11 +214,12 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
 
     def get_chain_size(self): # obter o tamanho da cadeia de blocos sem contar o bloco gênesis
         return len(self.chain)-1
+    
+    # MÉTODOS PARA APLICAR DE FORMA DISTRIBUÍDA 
 
+    def add_new_transaction(self, bloco):
+        self.unconfirmed_transactions.append(bloco)
 
-    #############################################
-    # MÉTODOS PARA APLICAR DE FORMA DISTRIBUÍDA # 
-    #############################################
     @synchronized
     def enviar_bloco_para_os_nos(self, bloco): # chamada remota para os outros nós da rede em diferentes threads
         stdoutmutex = threading.Lock()
@@ -223,9 +234,6 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
 
         return True
     
-    def add_new_transaction(self, bloco):
-        self.unconfirmed_transactions.append(bloco)
-
     def get_last_tstamp_transaction(self):
         if len(self.unconfirmed_transactions) > 0: # verifica de a lista de transações não está vazia
             return int(self.unconfirmed_transactions[-1].tstamp) # retorna o último elemento
@@ -235,6 +243,10 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
     def consenso(self, bloco):
        
         b = json.loads(bloco) # transformando o bloco enviado para algum formato em python, neste caso dict
+        
+        #print(type(b))
+        #print(b)
+        #print(b["dados"])
 
         index = len(self.chain) # obtendo o index do bloco
         bloco = Block(index, b["dados"]) # criando um bloco passando os dados recebidos de outro nó da rede
@@ -257,6 +269,7 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
                 if b.hash == bloco.hash: # caso seja o mesmo bloco, então ele não é um bloco novo
                     novo = False
         
+
         if int(bloco.tstamp) == int(self.getLastBlock().tstamp) and novo: # verifica se o bloco foi criado junto com o último bloco da cadeia
             if bloco.hash != self.getLastBlock().hash: # caso tenha sido criado no mesmo momento, porém não seja o mesmo bloco 
                 self.add_new_transaction(bloco) # adicionando o bloco na lista de blocos não confirmados
@@ -289,6 +302,22 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
         return False # caso contrário, retorna falso
 
 
+ 
+    #def mine(self):
+    #    if not self.unconfirmed_transactions:
+    #        return False
+ 
+    #    last_block = self.getLastBlock()
+ 
+    #    new_block = Block()
+ 
+    #    proof = self.proof_of_work(new_block)
+    #    self.add_block(new_block, proof)
+    #    self.unconfirmed_transactions = []
+    #    return new_block.index
+
+
+
 # para adicionar um bloco da forma original, pode ser considerado muito fácil, porém se for muito fácil adiconar um novo bloco
 # um hacker poderia alterar toda a cadeia de bloco de forma fácil, para evitar esse tipo de problema, são utilizados
 # alguns algoritmos de consendo (probabilístico), como por exemplo o Proof of Work (PoW), o PoW torna a adição de um bloco 
@@ -308,7 +337,7 @@ uri = daemon.register(blockchain) #instanciando um objeto remoto, realizando o r
 
 # para poder utilizar deve estar sendo executado o pyro-ns em um terminal
 ns = Pyro4.locateNS() # Get a proxy for a name server somewhere in the network.
-ns.register('b3', uri) # simplificando o nome do objeto
+ns.register('b1', uri) # simplificando o nome do objeto
 
 print(uri)
 
