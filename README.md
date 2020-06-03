@@ -1,4 +1,7 @@
 # BlockchainVoting
+Sistema de votação utilizando o framework Django e a tecnologia de blockchain.
+Neste projeto, foi desenvolvida uma blockchain genérica que funciona de forma distrbuída, visando disponibilizar ela para outras aplicações, via uma API REST. Será detalhada a implementação da aplicação em seus mínimos detalhes, visando ajudar futuros pesquisadores que desejarem estudar a tecnologia de blockchain, a motivação de detalhar a implementação do projeto, foi por notar que há muito conteúdo teórico em periódicos e online, porém há poucos conteúdos práticos que abordam o desenvolvimento de uma blockchain, ainda mais funcionando de forma distribuída. Para prova de conceito, foi desenvolvido uma aplicação web voltada para a votação eletrônica que vai acessar a API como uma aplicação cliente do web service, para armazenar informações sobre seus processos eleitorais.
+
 
 ## Intalação do Ambiente Virtual (opcional)
 
