@@ -25,7 +25,7 @@ def home():
     return "API da Blockchain", 200 # vai retornar uma string e um status de sucesso (200)
 
 ns = Pyro4.locateNS() # localizando o servidor de nomes
-uri = ns.lookup('b1') # obtendo a uri do objeto remoto
+uri = ns.lookup('b3') # obtendo a uri do objeto remoto (pode ser escolhido qualquer nó da rede)
 o = Pyro4.Proxy(uri) #pegando o objeto remoto
 #blockchain = o.getChainJson() # pega a lista de blocos em formato JSON
 

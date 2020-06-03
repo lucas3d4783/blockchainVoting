@@ -135,7 +135,6 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
         self.difficulty=3 # definindo a dificuldade da mineração - quanto maior o valor, mais tempo para minerar
         self.unconfirmed_transactions = []
         self.chain=[self.generateGenesisBlock(),] #criando a lista que será utilizada para armazenar os blocos, além de adicionar o bloco gênesis
-
     def generateGenesisBlock(self): #método para a criação de um bloco gênesis
         bloco = Block(0)
         bloco.tstamp = 0 # modificando o tstamp para que todos os blocos da rede tenham o mesmo bloco gênesis
@@ -183,8 +182,10 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
             print("Não foi possível criar um bloco, pois o tipo de dado informado não é válido")
             return False
 
-        bloco = Block(index, objJson) # criando um bloco 
-        self.addBlock(bloco) # adicionando o bloco na chain
+        bloco = Block() # criando um bloco 
+        bloco.index = index
+        bloco.dados = objJson
+        self.enviar_bloco_para_os_nos(bloco) # adicionando o bloco na chain
         return True
     
     def getChain(self):
