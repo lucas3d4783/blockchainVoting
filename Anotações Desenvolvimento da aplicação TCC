@@ -74,3 +74,7 @@ You may also want to set aside fixed JSON files that you use repeatedly.
 
 
 
+
+todos os nós podendo funcionar como nó principal para enviar blocos para os outros minerarem e devolverem um nonce para solucionar o desafio, fazendo com que os outros nós da rede, verifiquem os nonces em sua lista de blocos não confirmados, caso o nonce esteja correto o bloco é adicionado ---> deve ser adicionado um método para verificar se a cadeia está de acordo com o restante dos blocos da rede.
+
+

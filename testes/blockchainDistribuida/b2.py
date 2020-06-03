@@ -7,7 +7,7 @@ import threading
 import pickle
 
 atual = 'b2' # nó atual
-nos = ['b1', 'b2', 'b3'] # lista de blocos do sistema
+nos = ['b1', 'b2', 'b3', 'b4'] # lista de blocos do sistema
 
 class Envia_bloco_para_todos_os_nos(threading.Thread): # enviar bloco para os outros nós da rede, um em cada thread
     achou_nonce = False
@@ -42,10 +42,10 @@ class Envia_bloco_para_todos_os_nos(threading.Thread): # enviar bloco para os ou
                 stdoutmutex = threading.Lock()
                 threads = []
                 for no in nos:
-                    if no != atual: # verifica se o objeto não tem o mesmo nome do objeto atual    
-                        thread = Envia_nonce_para_todos_os_nos(nonce, no, stdoutmutex)
-                        thread.start() # método da classe pai, dar iniciar a thread, vai criar operações básicas para poder usar 
-                        threads.append(thread)
+                    #if no != atual: # verifica se o objeto não tem o mesmo nome do objeto atual    
+                    thread = Envia_nonce_para_todos_os_nos(nonce, no, stdoutmutex)
+                    thread.start() # método da classe pai, dar iniciar a thread, vai criar operações básicas para poder usar 
+                    threads.append(thread)
                 #Envia_bloco_para_todos_os_nos.achou_nonce = False
                 print("O nó ", self.no, " encontrou o nonce primeiro: ", str(retorno))
            
@@ -135,10 +135,7 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
         self.difficulty=3 # definindo a dificuldade da mineração - quanto maior o valor, mais tempo para minerar
         self.unconfirmed_transactions = []
         self.chain=[self.generateGenesisBlock(),] #criando a lista que será utilizada para armazenar os blocos, além de adicionar o bloco gênesis
-        bloco = Block()
-        bloco.dados = '{"lucas":"lucas"}'
-        self.enviar_bloco_para_os_nos(bloco)
-        
+
     def generateGenesisBlock(self): #método para a criação de um bloco gênesis
         bloco = Block(0)
         bloco.tstamp = 0 # modificando o tstamp para que todos os blocos da rede tenham o mesmo bloco gênesis
@@ -216,7 +213,11 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
     def enviar_bloco_para_os_nos(self, bloco): # chamada remota para os outros nós da rede em diferentes threads
         stdoutmutex = threading.Lock()
         threads = []
-        
+
+        b = {"index":bloco.index, "nonce":bloco.nonce, "tstamp":bloco.tstamp, "dados":bloco.dados, "prevhash":bloco.prevhash, "hash":bloco.hash}
+        bb = json.dumps(b)
+        self.consenso(bb)
+
         for no in nos: # enviando o bloco para os nós
             if no != atual: # verifica se o objeto não tem o mesmo nome do objeto atual    
                 thread = Envia_bloco_para_todos_os_nos(bloco, no, stdoutmutex)
@@ -236,7 +237,7 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
 
     @synchronized
     def consenso(self, bloco):
-       
+
         b = json.loads(bloco) # transformando o bloco enviado para algum formato em python, neste caso dict
 
         index = len(self.chain) # obtendo o index do bloco

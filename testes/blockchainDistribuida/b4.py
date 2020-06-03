@@ -6,6 +6,76 @@ from pytz import timezone
 import threading
 import pickle
 
+atual = 'b4' # nó atual
+nos = ['b1', 'b2', 'b3', 'b4'] # lista de blocos do sistema
+
+class Envia_bloco_para_todos_os_nos(threading.Thread): # enviar bloco para os outros nós da rede, um em cada thread
+    achou_nonce = False
+    nonce = 0
+    def __init__(self, bloco, no, mutex):
+        self.bloco = bloco
+        self.no = no
+        self.mutex = mutex
+        threading.Thread.__init__(self)
+
+    def run(self):
+        #with self.mutex: # para evitar que mais de uma thread use o print ao mesmo tempo   
+            ns = Pyro4.locateNS() # localizando o servidor de nomes
+            uri = ns.lookup(self.no) # obtendo a uri do objeto remoto
+            o = Pyro4.Proxy(uri) #pegando o objeto remoto
+
+            b = {"index":self.bloco.index, "nonce":self.bloco.nonce, "tstamp":self.bloco.tstamp, "dados":self.bloco.dados, "prevhash":self.bloco.prevhash, "hash":self.bloco.hash}
+
+            #b = {"index":self.bloco.index, "nonce":self.bloco.nonce, "tstamp":self.bloco.tstamp, "dados":"teste", "prevhash":"teste", "hash":self.bloco.hash}
+            bloco = json.dumps(b)
+            #print(bloco.__str__())
+
+            print("enviado bloco para o nó ", self.no) # printando qual bloco está sendo enviado para qual nó da rede 
+
+            retorno = o.consenso(bloco) # enviando o bloco serelizado para objeto remoto minerar 
+
+            if not Envia_bloco_para_todos_os_nos.achou_nonce:
+                Envia_bloco_para_todos_os_nos.achou_nonce = True
+                nonce = retorno
+                #print("O nó ", self.no, " encontrou o nonce primeiro: ", str(Envia_bloco_para_todos_os_nos.achou_nonce))
+
+                stdoutmutex = threading.Lock()
+                threads = []
+                for no in nos:
+                    #if no != atual: # verifica se o objeto não tem o mesmo nome do objeto atual    
+                    thread = Envia_nonce_para_todos_os_nos(nonce, no, stdoutmutex)
+                    thread.start() # método da classe pai, dar iniciar a thread, vai criar operações básicas para poder usar 
+                    threads.append(thread)
+                #Envia_bloco_para_todos_os_nos.achou_nonce = False
+                print("O nó ", self.no, " encontrou o nonce primeiro: ", str(retorno))
+           
+            print("O nó ", self.no, " encontrou o nonce: ", str(retorno))
+
+    print('Saindo da Thread Principal')
+
+class Envia_nonce_para_todos_os_nos(threading.Thread): # enviar nonce de um bloco para os outros nós da rede, um em cada thread
+    def __init__(self, nonce, no, mutex):
+        self.nonce = nonce
+        self.no = no
+        self.mutex = mutex
+        threading.Thread.__init__(self)
+
+    def run(self):
+        #with self.mutex: # para evitar que mais de uma thread use o print ao mesmo tempo   
+            ns = Pyro4.locateNS() # localizando o servidor de nomes
+            uri = ns.lookup(self.no) # obtendo a uri do objeto remoto
+            o = Pyro4.Proxy(uri) #pegando o objeto remoto
+
+            print("enviado nonce para o nó ", self.no) # printando o nó da rede
+
+            retorno = o.verificaNonce(self.nonce) # enviando o nonce para verificalção
+           
+            print("O nó ", self.no, " retornou o STATUS: ", str(retorno))
+            Envia_bloco_para_todos_os_nos.achou_nonce = False
+            
+    print('Saindo da Thread Principal')
+
+
 #primeiramente deve ser definido o bloco
 class Block(): # classe utilizada para a criação e manipulação de cada bloco de forma individual
     #construtor do bloco
@@ -21,14 +91,27 @@ class Block(): # classe utilizada para a criação e manipulação de cada bloco
     #função responsável por realizar o cálculo do hash do bloco
     def calcHash(self):
         #criando um dicionário com json, passando parâmetro por parâmetro, por fim, codificando para gerar o hash posteriormente
-        block_string=json.dumps({"index":self.index, "nonce":self.nonce, "tstamp":self.tstamp, "dados":self.dados, "prevhash":self.prevhash,}, sort_keys=True, ).encode()
+        #block_string=json.dumps({"index":self.index, "nonce":self.nonce, "tstamp":self.tstamp, "dados":self.dados, "prevhash":self.prevhash}).encode()
+        block_string = str(self.index) + str(self.nonce) + str(self.tstamp) + str(self.dados) + str(self.prevhash)
+        #block_string = "" + str(self.nonce)
+        block_string = block_string.encode()
         #retornando o hash do bloco
         return hashlib.sha256(block_string).hexdigest()
-    def mineBlock(self, diffic): # método utilizado para encontrar um hash com um determinado número de zeros no início (dificuldade)
-        while(self.hash[:diffic] != str('').zfill(diffic)): # enquanto a o inicio do hash do bloco até a dificuldade -1 não for igual a uma string que tenha o mesmo números de zeros que a dificuldade
-            self.nonce += 1 # incrementando o nonce para gerar um novo hash do bloco (também pode ser realizado de forma aleatória)
-            self.hash=self.calcHash() # gerando um novo hash para o bloco 
-        print("Bloco Minerado! - ", self.hash)
+    def mineBlock(self, diffic, nonce=-1): # método utilizado para encontrar um hash com um determinado número de zeros no início (dificuldade)
+        self.nonce = nonce
+        if self.nonce == -1: # se o nonce não tiver sido passado como parâmetro
+            self.nonce = 0
+            while(self.hash[:diffic] != str('').zfill(diffic)): # enquanto a o inicio do hash do bloco até a dificuldade -1 não for igual a uma string que tenha o mesmo números de zeros que a dificuldade
+                self.nonce += 1 # incrementando o nonce para gerar um novo hash do bloco (também pode ser realizado de forma aleatória)
+                self.hash=self.calcHash() # gerando um novo hash para o bloco 
+            print("Bloco Minerado! - ", self.hash)
+            return True
+        else:
+            self.hash=self.calcHash() # gera o hash do bloco com o nonce informado
+            if self.hash[:diffic] == str('').zfill(diffic): # se tiver suprido o desafio é retornado True caso contrário false
+                print("Bloco Minerado com nonce informado! - ", self.hash)
+                return True
+        return False
     
     # método para retornar informações do bloco
     def __str__(self):
@@ -49,13 +132,14 @@ class Block(): # classe utilizada para a criação e manipulação de cada bloco
 # após criar a classe referente aos blocos, deve ser criado a classe que vai representar a cadeia de blocos
 class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cadeia de blocos
     def __init__(self): #função construct da classe
+        self.difficulty=3 # definindo a dificuldade da mineração - quanto maior o valor, mais tempo para minerar
         self.unconfirmed_transactions = []
         self.chain=[self.generateGenesisBlock(),] #criando a lista que será utilizada para armazenar os blocos, além de adicionar o bloco gênesis
-        self.difficulty=4 # definindo a dificuldade da mineração - quanto maior o valor, mais tempo para minerar
-        #print(type(self.chain))
-        #print(type(self))
+
     def generateGenesisBlock(self): #método para a criação de um bloco gênesis
         bloco = Block(0)
+        bloco.tstamp = 0 # modificando o tstamp para que todos os blocos da rede tenham o mesmo bloco gênesis
+        bloco.mineBlock(self.difficulty) # pois foi alterado na linha anterior
         return bloco #retorna um bloco gênesis
     
     def getLastBlock(self): #método para obter o último bloco da cadeia
@@ -64,12 +148,8 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
     def addBlock(self, newBlock): #adicionar novo bloco na cadeia, passando o novo bloco como parâmetro
         newBlock.prevhash=self.getLastBlock().hash # definindo o atributo 'prevhash' como o hash do último bloco da cadeia de blocos
         newBlock.mineBlock(self.difficulty) #calculando o hash do novo bloco
-        #newBlock.hash=newBlock.calcHash() #calculando o hash do novo bloco
-        #aplicar semaforos no método
         self.chain.append(newBlock) #adicionando o bloco novo na chain (lista da classe Blockchain)
         print(self.getChain())
-        #print("STATUS da Chain: ", self.isChainValid())
-        #print("QUANTIDADE de BLOCOS: ", self.get_chain_size())
     
     def isChainValid(self): # Método para verificar de a cadeia de blocos é válida
         for i in range(1, len(self.chain)): # varrendo os blocos da lista, exceto o bloco gênesis
@@ -108,40 +188,109 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
         return True
     
     def getChain(self):
-        #count = 0 # criando um contador para os blocos
-        result = "";
+        result = ""
         for bloco in self.chain: #varrer a cadeia de blocos
             result+="\n------------------------------\n"
             result+="           BLOCO " + str(bloco.index) + "\n"
             result+=bloco.__str__() + "\n" # mostrando as informações do respectivo bloco
-            #count+=1 # incrementando o contador de blocos
-        return result;
-        #print("Estado do sistema: ", self.isChainValid()) #verifica a integridade dos blocos e da chain
+        result+="STATUS da Chain: " + str(self.isChainValid()) + "\n"
+        return result
     
     def getChainJson(self):
         lista = []
         for bloco in self.chain:
-            lista.append({"index":bloco.index, "nonce":bloco.nonce, "tstamp":bloco.tstamp, "dados":bloco.dados, "prev_hash":bloco.prevhash, "hash":bloco.hash})
+            lista.append({"index":bloco.index, "nonce":bloco.nonce, "tstamp":bloco.tstamp, "dados":bloco.dados, "prevhash":bloco.prevhash, "hash":bloco.hash})
         return json.dumps(lista)
 
     def get_chain_size(self): # obter o tamanho da cadeia de blocos sem contar o bloco gênesis
         return len(self.chain)-1
+
+
+    #############################################
+    # MÉTODOS PARA APLICAR DE FORMA DISTRIBUÍDA # 
+    #############################################
+    @synchronized
+    def enviar_bloco_para_os_nos(self, bloco): # chamada remota para os outros nós da rede em diferentes threads
+        stdoutmutex = threading.Lock()
+        threads = []
+
+        b = {"index":bloco.index, "nonce":bloco.nonce, "tstamp":bloco.tstamp, "dados":bloco.dados, "prevhash":bloco.prevhash, "hash":bloco.hash}
+        bb = json.dumps(b)
+        self.consenso(bb)
+
+        for no in nos: # enviando o bloco para os nós
+            if no != atual: # verifica se o objeto não tem o mesmo nome do objeto atual    
+                thread = Envia_bloco_para_todos_os_nos(bloco, no, stdoutmutex)
+                thread.start() # método da classe pai, dar iniciar a thread, vai criar operações básicas para poder usar 
+                threads.append(thread)
+        print("enviou o bloco para os nós...")
+
+        return True
     
-
-    def consenso(self, bloco):
-        bloco = json.loads(bloco)
-        self.add_new_transaction(bloco) #desserializando o objeto e convertendo ele para python
-
-        index = len(self.chain)
-        b = Block(index, bloco.dados)
-
-        #bloco.prevhash=self.getLastBlock().hash
-        b.mineBlock(self.difficulty)
-        
-        return bloco.nonce
-        
     def add_new_transaction(self, bloco):
         self.unconfirmed_transactions.append(bloco)
+
+    def get_last_tstamp_transaction(self):
+        if len(self.unconfirmed_transactions) > 0: # verifica de a lista de transações não está vazia
+            return int(self.unconfirmed_transactions[-1].tstamp) # retorna o último elemento
+        return 0
+
+    @synchronized
+    def consenso(self, bloco):
+
+        b = json.loads(bloco) # transformando o bloco enviado para algum formato em python, neste caso dict
+
+        index = len(self.chain) # obtendo o index do bloco
+        bloco = Block(index, b["dados"]) # criando um bloco passando os dados recebidos de outro nó da rede
+
+        bloco.tstamp = b["tstamp"] #  colocando o tstamp como tstamp que ele foi enviado para o primeiro bloco
+
+        if len(self.unconfirmed_transactions) > 0:
+            bloco.prevhash=self.unconfirmed_transactions[-1] # pegando o hash do último bloco da lista de blocos não confirmados
+            bloco.index = len(self.chain) + len(self.unconfirmed_transactions)
+        else:
+            bloco.prevhash=self.getLastBlock().hash # pegando o hash do bloco anterior
+    
+        bloco.mineBlock(self.difficulty) # minerando o bloco para encontrar o nonce para o desafio, assim será setado o valor o nonce e do hash do bloco
+        
+        print(bloco.__str__())
+
+        novo = True
+        for b in self.unconfirmed_transactions: # verifica se não tem nenhum bloco que foi criado posteriormente, ou junto ao bloco atual, assim evitando que se um bloco for recebido mais de uma vez ele não seja adicionado, além de manter a ordem da cadeia de blocos 
+            if int(b.tstamp) <= int(bloco.tstamp): # caso o bloco tenha sido criado junto com algum dos blocos
+                if b.hash == bloco.hash: # caso seja o mesmo bloco, então ele não é um bloco novo
+                    novo = False
+        
+        if int(bloco.tstamp) == int(self.getLastBlock().tstamp) and novo: # verifica se o bloco foi criado junto com o último bloco da cadeia
+            if bloco.hash != self.getLastBlock().hash: # caso tenha sido criado no mesmo momento, porém não seja o mesmo bloco 
+                self.add_new_transaction(bloco) # adicionando o bloco na lista de blocos não confirmados
+        elif int(bloco.tstamp) > int(self.getLastBlock().tstamp) and novo: # garante que o bloco adicionado seja um bloco novo
+            self.add_new_transaction(bloco) # adicionando o bloco na lista de blocos não confirmados
+        
+
+        print(bloco.dados)
+        print("nonce encontrado: ", bloco.nonce) # printando o nonce encontrado
+
+        #print(self.getChain())
+
+        #print(bloco.__str__())
+
+        print(self.isChainValid())
+
+        return bloco.nonce # retornando o nonce encontrado para os nós da rede 
+
+    @synchronized
+    def verificaNonce(self, nonce): # Função para verificar o nonce informado e adicionar o bloco na chain
+        print("Nonce recebido: ", str(nonce))
+        for bloco_n_confirmado in self.unconfirmed_transactions:
+            bloco_n_confirmado.nonce = nonce
+            if bloco_n_confirmado.mineBlock(self.difficulty, nonce): # verifica se o nonce informado está correto 
+                self.chain.append(bloco_n_confirmado)
+                #print(self.getChain())
+                self.unconfirmed_transactions.remove(bloco_n_confirmado)
+
+                return True # se sim, retorna verdadeiro
+        return False # caso contrário, retorna falso
 
 
 # para adicionar um bloco da forma original, pode ser considerado muito fácil, porém se for muito fácil adiconar um novo bloco

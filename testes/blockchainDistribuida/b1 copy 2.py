@@ -6,7 +6,7 @@ from pytz import timezone
 import threading
 import pickle
 
-atual = 'b3' # nó atual
+atual = 'b1' # nó atual
 nos = ['b1', 'b2', 'b3', 'b4'] # lista de blocos do sistema
 
 class Envia_bloco_para_todos_os_nos(threading.Thread): # enviar bloco para os outros nós da rede, um em cada thread
@@ -135,7 +135,10 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
         self.difficulty=3 # definindo a dificuldade da mineração - quanto maior o valor, mais tempo para minerar
         self.unconfirmed_transactions = []
         self.chain=[self.generateGenesisBlock(),] #criando a lista que será utilizada para armazenar os blocos, além de adicionar o bloco gênesis
-
+        bloco = Block()
+        bloco.dados = '{"lucas":"lucas"}'
+        self.enviar_bloco_para_os_nos(bloco)
+        
     def generateGenesisBlock(self): #método para a criação de um bloco gênesis
         bloco = Block(0)
         bloco.tstamp = 0 # modificando o tstamp para que todos os blocos da rede tenham o mesmo bloco gênesis
@@ -213,16 +216,12 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
     def enviar_bloco_para_os_nos(self, bloco): # chamada remota para os outros nós da rede em diferentes threads
         stdoutmutex = threading.Lock()
         threads = []
-
-        b = {"index":bloco.index, "nonce":bloco.nonce, "tstamp":bloco.tstamp, "dados":bloco.dados, "prevhash":bloco.prevhash, "hash":bloco.hash}
-        bb = json.dumps(b)
-        self.consenso(bb)
-
+        
         for no in nos: # enviando o bloco para os nós
-            if no != atual: # verifica se o objeto não tem o mesmo nome do objeto atual    
-                thread = Envia_bloco_para_todos_os_nos(bloco, no, stdoutmutex)
-                thread.start() # método da classe pai, dar iniciar a thread, vai criar operações básicas para poder usar 
-                threads.append(thread)
+            #if no != atual: # verifica se o objeto não tem o mesmo nome do objeto atual    
+            thread = Envia_bloco_para_todos_os_nos(bloco, no, stdoutmutex)
+            thread.start() # método da classe pai, dar iniciar a thread, vai criar operações básicas para poder usar 
+            threads.append(thread)
         print("enviou o bloco para os nós...")
 
         return True
@@ -237,7 +236,7 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
 
     @synchronized
     def consenso(self, bloco):
-
+       
         b = json.loads(bloco) # transformando o bloco enviado para algum formato em python, neste caso dict
 
         index = len(self.chain) # obtendo o index do bloco
@@ -312,7 +311,7 @@ uri = daemon.register(blockchain) #instanciando um objeto remoto, realizando o r
 
 # para poder utilizar deve estar sendo executado o pyro-ns em um terminal
 ns = Pyro4.locateNS() # Get a proxy for a name server somewhere in the network.
-ns.register('b3', uri) # simplificando o nome do objeto
+ns.register('b1', uri) # simplificando o nome do objeto
 
 print(uri)
 

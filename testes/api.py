@@ -25,25 +25,28 @@ def home():
     return "API da Blockchain", 200 # vai retornar uma string e um status de sucesso (200)
 
 ns = Pyro4.locateNS() # localizando o servidor de nomes
-uri = ns.lookup('blockchain') # obtendo a uri do objeto remoto
+uri = ns.lookup('b1') # obtendo a uri do objeto remoto
 o = Pyro4.Proxy(uri) #pegando o objeto remoto
 #blockchain = o.getChainJson() # pega a lista de blocos em formato JSON
 
 def atualizaListaDeBlocos(): # atualizar a lista de blocos
+    #return normalize('NFKD', o.getChainJson()).encode('utf8').decode('utf8')
     return o.getChainJson()
-
 @app.route('/blocos', methods=['GET']) 
 def blocos(): # retorna todos os blocos
     blockchain = atualizaListaDeBlocos()
     return blockchain, 200 
 
-@app.route('/blocos/<string:isVoto>', methods=['GET']) 
-def blocos_por_isVoto(isVoto): # filtrar blocos por isVoto (True/False)
-    blockchain = json.loads(atualizaListaDeBlocos())
-    if isVoto == "false" or isVoto == "False": # verifica se foi passado False
-        isVoto = "" # o bool() interpreta "" como false
-    blocos = [bloco for bloco in blockchain if bloco['isVoto'] == bool(isVoto)] 
-    return json.dumps(blocos), 200
+@app.route('/blocos/quantidade', methods=['GET']) 
+def quantidade(): # retorna todos os blocos
+    quant = o.get_chain_size()
+    return str(quant), 200 
+
+@app.route('/blocos/status', methods=['GET']) 
+def status(): # retorna todos os blocos
+    s = o.isChainValid()
+    return str(s), 200 
+
 
 #EXEMPLO:
 # curl http://127.0.0.1:8001/blocos/1 | jq
@@ -60,9 +63,10 @@ def blocos_por_index(index): # filtrar blocos por index
 # requisição com método POST com curl:
 # curl -X POST -H 'Content-Type: application/json' -d '{"exemplo": 1, "testando": "uma inserção qualquer"}' http://127.0.0.1:8001/blocos
 @app.route('/blocos', methods=['POST']) 
-def add_bloco_generico():
+def criarBloco():
     dados = normalize('NFKD', str(request.get_json())).encode('ASCII', 'ignore').decode('ASCII')
-    o.criarBlocoGenerico(json.dumps(dados))
+    #dados = str(request.get_json())
+    o.criarBloco(json.dumps(dados))
     return json.dumps(dados), 201
 
 
