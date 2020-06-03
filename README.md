@@ -56,3 +56,8 @@ Em outro terminal deve ser executado o comando ...... para a criação de uma bl
   <img src="prints/8.jpg" class="img-fluid" width="45%">
 </div>
 
+## Integração da Blockchain com a API REST
+<div align="center" style="padding='3%'">
+  <img src="prints/api.png" class="img-fluid" style="" width="95%">
+</div>
+
