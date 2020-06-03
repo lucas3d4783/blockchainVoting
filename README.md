@@ -31,7 +31,6 @@ Em outro terminal deve ser executado o comando ...... para a criação de uma bl
 # Algumas Telas do Sistema
 ## Desktop
 <div align="center" style="padding='3%'">
-  <img src="prints/api.png" class="img-fluid" style="" width="95%">
   <img src="prints/1.png" class="img-fluid" style="" width="95%">
   <img src="prints/2.png" class="img-fluid" width="95%">
   <img src="prints/3.png" class="img-fluid" width="95%">
