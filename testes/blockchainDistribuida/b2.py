@@ -20,19 +20,25 @@ class Envia_bloco_para_todos_os_nos(threading.Thread): # enviar bloco para os ou
 
     def run(self):
         #with self.mutex: # para evitar que mais de uma thread use o print ao mesmo tempo   
-            ns = Pyro4.locateNS() # localizando o servidor de nomes
-            uri = ns.lookup(self.no) # obtendo a uri do objeto remoto
-            o = Pyro4.Proxy(uri) #pegando o objeto remoto
+            try:
+                ns = Pyro4.locateNS() # localizando o servidor de nomes
+            except Pyro4.errors.NamingError: # caso o servidor de nomes não esteja sendo executado
+                print("Falha para localizar o servidor de nomes! - Execute o servidor de nomes (pyro4-ns)")
+                exit()
 
-            b = {"index":self.bloco.index, "nonce":self.bloco.nonce, "tstamp":self.bloco.tstamp, "dados":self.bloco.dados, "prevhash":self.bloco.prevhash, "hash":self.bloco.hash}
+            try: 
+                uri = ns.lookup(self.no) # obtendo a uri do objeto remoto
+                o = Pyro4.Proxy(uri) #pegando o objeto remoto
 
-            #b = {"index":self.bloco.index, "nonce":self.bloco.nonce, "tstamp":self.bloco.tstamp, "dados":"teste", "prevhash":"teste", "hash":self.bloco.hash}
-            bloco = json.dumps(b)
-            #print(bloco.__str__())
+                b = {"index":self.bloco.index, "nonce":self.bloco.nonce, "tstamp":self.bloco.tstamp, "dados":self.bloco.dados, "prevhash":self.bloco.prevhash, "hash":self.bloco.hash}
+                bloco = json.dumps(b)
 
-            print("enviado bloco para o nó ", self.no) # printando qual bloco está sendo enviado para qual nó da rede 
+                print("Enviado bloco para o nó ", self.no) # printando qual bloco está sendo enviado para qual nó da rede 
 
-            retorno = o.consenso(bloco) # enviando o bloco serelizado para objeto remoto minerar 
+                retorno = o.consenso(bloco) # enviando o bloco serelizado para objeto remoto minerar 
+            except Pyro4.errors.CommunicationError: # caso não consiga acessar o processo
+                print("Não foi possível enviar para o nó ", self.no) 
+                return False
 
             if not Envia_bloco_para_todos_os_nos.achou_nonce:
                 Envia_bloco_para_todos_os_nos.achou_nonce = True
@@ -62,14 +68,22 @@ class Envia_nonce_para_todos_os_nos(threading.Thread): # enviar nonce de um bloc
 
     def run(self):
         #with self.mutex: # para evitar que mais de uma thread use o print ao mesmo tempo   
-            ns = Pyro4.locateNS() # localizando o servidor de nomes
-            uri = ns.lookup(self.no) # obtendo a uri do objeto remoto
-            o = Pyro4.Proxy(uri) #pegando o objeto remoto
+            try:
+                ns = Pyro4.locateNS() # localizando o servidor de nomes
+            except Pyro4.errors.NamingError: # caso o servidor de nomes não esteja sendo executado
+                print("Falha para localizar o servidor de nomes! - Execute o servidor de nomes (pyro4-ns)")
+                exit()
+            try:
+                uri = ns.lookup(self.no) # obtendo a uri do objeto remoto
+                o = Pyro4.Proxy(uri) #pegando o objeto remoto
 
-            print("enviado nonce para o nó ", self.no) # printando o nó da rede
+                print("enviado nonce para o nó ", self.no) # printando o nó da rede
 
-            retorno = o.verificaNonce(self.nonce) # enviando o nonce para verificalção
-           
+                retorno = o.verificaNonce(self.nonce) # enviando o nonce para verificalção
+            except Pyro4.errors.CommunicationError: # caso não consiga acessar o processo
+                print("Não foi possível enviar para o nó ", self.no)
+                return False
+
             print("O nó ", self.no, " retornou o STATUS: ", str(retorno))
             Envia_bloco_para_todos_os_nos.achou_nonce = False
             
@@ -97,6 +111,7 @@ class Block(): # classe utilizada para a criação e manipulação de cada bloco
         block_string = block_string.encode()
         #retornando o hash do bloco
         return hashlib.sha256(block_string).hexdigest()
+
     def mineBlock(self, diffic, nonce=-1): # método utilizado para encontrar um hash com um determinado número de zeros no início (dificuldade)
         self.nonce = nonce
         if self.nonce == -1: # se o nonce não tiver sido passado como parâmetro

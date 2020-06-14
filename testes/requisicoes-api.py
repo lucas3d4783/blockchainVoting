@@ -13,7 +13,7 @@ print("\nBlocos:\n", r.text)
 r = requests.get('http://127.0.0.1:8001/blocos/quantidade')
 print("Quantidade de blocos:", r.text)
 
-# obter todos os blocos 
+# obter o status da chain 
 r = requests.get('http://127.0.0.1:8001/blocos/status')
 print("STATUS:", r.text)
 

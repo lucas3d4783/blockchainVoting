@@ -2,6 +2,7 @@ from flask import Flask, request # importando o Flask framework
 import json
 import Pyro4
 from unicodedata import normalize
+import time
 
 # RESUMO
 #Desenvolvi uma API REST web em Python com o framework Flask, visando disponibilizar métodos de consulta e inserção na blockchain, 
@@ -14,6 +15,46 @@ from unicodedata import normalize
 
 app = Flask(__name__)
 
+nos = ['b1', 'b2', 'b3', 'b4'] # lista de blocos do sistema
+
+#### Métodos ####
+
+def selecionaNo(): # método que vai percorrer a lista que contém todos os processos do sistema e selecionar o primeiro que responder, como o processo central do sistema
+    for no in nos:
+        obj = None # variável para armazenar o processo central
+        try:
+            ns = Pyro4.locateNS() # localizando o servidor de nomes, e pegando os nomes dos objetos novamente
+            try:
+                #print(no)
+                uri = ns.lookup(no) # obtendo a uri do objeto remoto (pode ser escolhido qualquer processo da rede)
+                obj = Pyro4.Proxy(uri) #pegando o objeto remoto
+                obj.isChainValid() # tenta acessar algum método do objeto para ver se vai gerar exception
+            except: # qualquer exception que ocorrer
+                obj = False # Quando não é possível conectar-se com o objeto remoto, o pyro4 armazena um objeto com status not connected, ex: <Pyro4.core.Proxy at 0x7fc5a7ccfc70; not connected; for PYRO:obj_2f0d564eac3f4089bfc782304eaad088@localhost:35723>
+                print("O processo", no, "não respondeu")
+            if obj: # verifica se foi possível acessar as informações de algum processo da rede
+                print("O processo", no, "foi selecionado como nó central")
+                return obj
+        except Pyro4.errors.NamingError:
+            print("Failed to locate the nameserver - Execute o servidor de nomes (pyro4-ns)")
+            exit()
+
+    print("Nenhum processo da rede respondeu, verifique a conexão com os nós da rede, a API está sendo encerrada ...")
+    #time.sleep(2)
+    exit()
+        
+
+def atualizaListaDeBlocos(): # atualizar a lista de blocos
+    #return normalize('NFKD', o.getChainJson()).encode('utf8').decode('utf8')
+    try: # tenta acessar o processo para obter a chain atualizada
+        o = selecionaNo()
+        return o.getChainJson()
+    except Pyro4.errors.CommunicationError: # caso não consiga acessar para obter a lista, escolhe um outro processo da rede e tenta obter a chain novamente
+        return False
+
+
+#### Rotas para acessar a API ####
+
 #GET
 # curl com requisição com método GET:
 # curl http://127.0.0.1:8001/blocos 
@@ -24,28 +65,30 @@ app = Flask(__name__)
 def home():
     return "API da Blockchain", 200 # vai retornar uma string e um status de sucesso (200)
 
-ns = Pyro4.locateNS() # localizando o servidor de nomes
-uri = ns.lookup('b3') # obtendo a uri do objeto remoto (pode ser escolhido qualquer nó da rede)
-o = Pyro4.Proxy(uri) #pegando o objeto remoto
-#blockchain = o.getChainJson() # pega a lista de blocos em formato JSON
-
-def atualizaListaDeBlocos(): # atualizar a lista de blocos
-    #return normalize('NFKD', o.getChainJson()).encode('utf8').decode('utf8')
-    return o.getChainJson()
 @app.route('/blocos', methods=['GET']) 
 def blocos(): # retorna todos os blocos
     blockchain = atualizaListaDeBlocos()
+    if blockchain == False: 
+        return json.dumps({"erro": "Não foi possível obter a Blockchain, tente novamente!"}), 500
     return blockchain, 200 
 
 @app.route('/blocos/quantidade', methods=['GET']) 
 def quantidade(): # retorna todos os blocos
-    quant = o.get_chain_size()
-    return str(quant), 200 
+    try:
+        o = selecionaNo()
+        quant = o.get_chain_size()
+        return str(quant), 200 
+    except Pyro4.errors.CommunicationError:
+        return json.dumps({"erro": "Não foi possível verificar o número total de blocos da Blockchain, tente novamente!"}), 500
 
 @app.route('/blocos/status', methods=['GET']) 
 def status(): # retorna todos os blocos
-    s = o.isChainValid()
-    return str(s), 200 
+    try:
+        o = selecionaNo()
+        s = o.isChainValid()
+        return str(s), 200 
+    except Pyro4.errors.CommunicationError: # exception caso o objeto esteja cadastrado no servidor de nomes, mas ocorra algum erro na comunicação com o mesmo
+        return json.dumps({"erro": "Não foi possível verificar o STATUS da Blockchain, tente novamente!"}), 500
 
 
 #EXEMPLO:
@@ -65,9 +108,12 @@ def blocos_por_index(index): # filtrar blocos por index
 @app.route('/blocos', methods=['POST']) 
 def criarBloco():
     dados = normalize('NFKD', str(request.get_json())).encode('ASCII', 'ignore').decode('ASCII')
-    #dados = str(request.get_json())
-    o.criarBloco(json.dumps(dados))
-    return json.dumps(dados), 201
+    try:
+        o = selecionaNo()
+        o.criarBloco(json.dumps(dados))
+        return json.dumps(dados), 201
+    except Pyro4.errors.CommunicationError:
+        return json.dumps({"erro": "Não foi possível adicionar o bloco na cadeia, tente novamente!"}), 500
 
 
 if __name__=='__main__':
