@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import hashlib
 import json
 import datetime
@@ -36,7 +38,7 @@ class Envia_bloco_para_todos_os_nos(threading.Thread): # enviar bloco para os ou
                 print("Enviado bloco para o nó ", self.no) # printando qual bloco está sendo enviado para qual nó da rede 
 
                 retorno = o.consenso(bloco) # enviando o bloco serelizado para objeto remoto minerar 
-            except Pyro4.errors.CommunicationError: # caso não consiga acessar o processo
+            except: # caso ocorra algum erro ao tentar acessar algum processo
                 print("Não foi possível enviar para o nó ", self.no) 
                 return False
 
@@ -80,7 +82,7 @@ class Envia_nonce_para_todos_os_nos(threading.Thread): # enviar nonce de um bloc
                 print("enviado nonce para o nó ", self.no) # printando o nó da rede
 
                 retorno = o.verificaNonce(self.nonce) # enviando o nonce para verificalção
-            except Pyro4.errors.CommunicationError: # caso não consiga acessar o processo
+            except: # caso não consiga acessar o processo
                 print("Não foi possível enviar para o nó ", self.no)
                 return False
 
@@ -308,6 +310,65 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
 
                 return True # se sim, retorna verdadeiro
         return False # caso contrário, retorna falso
+
+    def comparaChains(self):
+        try:
+            ns = Pyro4.locateNS() # localizando o servidor de nomes
+        except Pyro4.errors.NamingError: # caso o servidor de nomes não esteja sendo executado
+            print("Falha para localizar o servidor de nomes! - Execute o servidor de nomes (pyro4-ns)")
+            exit()
+        
+        total = 1 # para contar com o próprio processo na porcentagem total
+        n_elementos = 1 # para contar com o próprio processo na porcentagem total
+        for no in nos: #percorrendo a lista de processos
+            if not no == atual:
+                try:
+                    uri = ns.lookup(no) # obtendo a uri do objeto remoto
+                    o = Pyro4.Proxy(uri) #pegando o objeto remoto
+                    if o.get_chain_size() == self.get_chain_size():
+                        if o.getChain() == self.getChain(): # se as cadeias forem iguai
+                            total += 1 # soma 1 no somatótio total
+                            n_elementos += 1 # incremaneta o número de elementos somados
+                        else:
+                            total += 0 # soma zero no somatório  total
+                            n_elementos += 1
+                    
+                    # Os dois próximos elifs são para dar uma tolerância de atraso de um bloco nas chain, ele vai verificar a diferença entre os tamanhos da chains
+                    elif (o.get_chain_size() - self.get_chain_size()) == 1: # se a chain REMOTA for um bloco maior do que a chain LOCAL, tendo 1 como tolerância de atraso na rede
+                        r = o.getChainJson()
+                        objR = json.loads(r)
+                        del objR[-1] # removendo o bloco que está sobrando na comparação
+                        teste = True
+                        for x in len(self.get_chain_size):
+                            if not self.chain[x].hash == objR[x].hash: # caso em alguma posição da chain, as duas chain não estejam iguais
+                                total += 0 # soma zero no somatório  total
+                                n_elementos += 1
+                            else:                                
+                                total += 1 # soma 1 no somatótio total
+                                n_elementos += 1
+                        
+                        
+                    elif (self.get_chain_size() - o.get_chain_size()) == 1: # se a chain LOCAL for um bloco maior do que a chain REMOTA, tendo 1 como tolerância de atraso na rede
+                        objL = self.chain
+                        del objL[-1] # removendo o bloco que está sobrando na comparação
+                        teste = True
+                        for x in len(self.get_chain_size):
+                            if not objL.chain[x].hash == objR[x].hash: # caso em alguma posição da chain, as duas chain não estejam iguais
+                                total += 0 # soma zero no somatório  total
+                                n_elementos += 1
+                            else:
+                                total += 1 # soma 1 no somatótio total
+                                n_elementos += 1
+                    
+                    else: # caso a diferença for maior que 1
+                        total += 0 # soma zero no somatório  total
+                        n_elementos += 1
+                        
+                except: # caso não consiga se comunicar com o processo da rede, subtrai um do número total de nós, assim evitando que a quantidade total não seja dividida pela quantidade errada de elementos, ocasionando em uma porcentagem errada
+                    print("Não foi possível acessar o nó", no)
+        porcentagem = (total * 100)/n_elementos
+        print("Pocentagem de nós com a mesma chain: ", porcentagem)
+        return porcentagem # retorna a porcentagem de processos que tem a chain igual a do processo atual
 
 
 # para adicionar um bloco da forma original, pode ser considerado muito fácil, porém se for muito fácil adiconar um novo bloco

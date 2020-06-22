@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from flask import Flask, request # importando o Flask framework 
 import json
 import Pyro4
@@ -86,6 +88,14 @@ def status(): # retorna todos os blocos
     except: # exception caso o objeto esteja cadastrado no servidor de nomes, mas ocorra algum erro na comunicação com o mesmo
         return '{"erro": "Não foi possível verificar o STATUS da Blockchain, tente novamente!"}', 500
 
+@app.route('/blocos/comparaChains', methods=['GET']) 
+def coparaChains(): # Retorna a porcentagem de processos que estão com a chain no mesmo estado que o processo central
+    try:
+        o = selecionaNo()
+        porcentagem = '{"porcentagem":"' + str(o.comparaChains()) + '%"}'
+        return porcentagem, 200 
+    except: # exception caso o objeto esteja cadastrado no servidor de nomes, mas ocorra algum erro na comunicação com o mesmo
+        return '{"erro": "Não foi possível fazer a comparação entre as cadeias de blocos dos processos da rede, tente novamente!"}', 500
 
 #EXEMPLO:
 # curl http://127.0.0.1:8001/blocos/1 | jq
@@ -109,7 +119,7 @@ def criarBloco():
     dados = str(request.get_json())
     try:
         o = selecionaNo()
-        o.criarBloco(dados)
+        o.criarBloco(json.dumps(dados))
         return json.dumps(dados), 201
     except:
         return '{"erro": "Não foi possível adicionar o bloco na cadeia, tente novamente!"}', 500
