@@ -97,6 +97,11 @@ def coparaChains(): # Retorna a porcentagem de processos que estão com a chain 
     except: # exception caso o objeto esteja cadastrado no servidor de nomes, mas ocorra algum erro na comunicação com o mesmo
         return '{"erro": "Não foi possível fazer a comparação entre as cadeias de blocos dos processos da rede, tente novamente!"}', 500
 
+@app.route('/blocos/quantidadeDeProcessos', methods=['GET']) 
+def quantidadeDeProcessos(): # Retorna a quantidade de processos do sistema 
+    quant = '{"quantidadeDeProcessos":"' + str(len(nos)) + '"}'
+    return quant, 200 
+
 #EXEMPLO:
 # curl http://127.0.0.1:8001/blocos/1 | jq
 @app.route('/blocos/<int:index>', methods=['GET']) 
