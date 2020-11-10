@@ -12,7 +12,7 @@ atual = 'b1' # nó atual
 nos = ['b1', 'b2', 'b3', 'b4'] # lista de blocos do sistema
 
 class Send_block_for_all_nodes(threading.Thread): # enviar bloco para os outros nós da rede, um em cada thread
-    achou_nonce = False
+    found_nouce = False
     nonce = 0
     def __init__(self, bloco, no, mutex):
         self.bloco = bloco
@@ -42,10 +42,10 @@ class Send_block_for_all_nodes(threading.Thread): # enviar bloco para os outros 
                 print("Não foi possível enviar para o nó ", self.no) 
                 return False
 
-            if not Send_block_for_all_nodes.achou_nonce:
-                Send_block_for_all_nodes.achou_nonce = True
+            if not Send_block_for_all_nodes.found_nouce:
+                Send_block_for_all_nodes.found_nouce = True
                 nonce = retorno
-                #print("O nó ", self.no, " encontrou o nonce primeiro: ", str(Send_block_for_all_nodes.achou_nonce))
+                #print("O nó ", self.no, " encontrou o nonce primeiro: ", str(Send_block_for_all_nodes.found_nouce))
 
                 stdoutmutex = threading.Lock()
                 threads = []
@@ -54,7 +54,7 @@ class Send_block_for_all_nodes(threading.Thread): # enviar bloco para os outros 
                     thread = Send_nonce_for_all_nodes(nonce, no, stdoutmutex)
                     thread.start() # método da classe pai, dar iniciar a thread, vai criar operações básicas para poder usar 
                     threads.append(thread)
-                #Send_block_for_all_nodes.achou_nonce = False
+                #Send_block_for_all_nodes.found_nouce = False
                 print("O nó ", self.no, " encontrou o nonce primeiro: ", str(retorno))
            
             print("O nó ", self.no, " encontrou o nonce: ", str(retorno))
@@ -87,7 +87,7 @@ class Send_nonce_for_all_nodes(threading.Thread): # enviar nonce de um bloco par
                 return False
 
             print("O nó ", self.no, " retornou o STATUS: ", str(retorno))
-            Send_block_for_all_nodes.achou_nonce = False
+            Send_block_for_all_nodes.found_nouce = False
             
     print('Saindo da Thread Principal')
 
