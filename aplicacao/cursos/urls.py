@@ -8,5 +8,4 @@ urlpatterns = [
     path('consulta/', views.consulta, name='consulta_cursos'),
     url('cadastro/', views.cadastro, name='cadastro_cursos'),
     url(r'^edit/(?P<pk>[0-9]+)$', views.edicao, name='edicao_cursos'),
-    
 ]
