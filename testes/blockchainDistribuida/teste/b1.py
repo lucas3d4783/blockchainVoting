@@ -11,7 +11,7 @@ import pickle
 atual = 'b1' # nó atual
 nos = ['b1', 'b2', 'b3', 'b4'] # lista de blocos do sistema
 
-class Envia_bloco_para_todos_os_nos(threading.Thread): # enviar bloco para os outros nós da rede, um em cada thread
+class Send_block_for_all_nodes(threading.Thread): # enviar bloco para os outros nós da rede, um em cada thread
     achou_nonce = False
     nonce = 0
     def __init__(self, bloco, no, mutex):
@@ -42,26 +42,26 @@ class Envia_bloco_para_todos_os_nos(threading.Thread): # enviar bloco para os ou
                 print("Não foi possível enviar para o nó ", self.no) 
                 return False
 
-            if not Envia_bloco_para_todos_os_nos.achou_nonce:
-                Envia_bloco_para_todos_os_nos.achou_nonce = True
+            if not Send_block_for_all_nodes.achou_nonce:
+                Send_block_for_all_nodes.achou_nonce = True
                 nonce = retorno
-                #print("O nó ", self.no, " encontrou o nonce primeiro: ", str(Envia_bloco_para_todos_os_nos.achou_nonce))
+                #print("O nó ", self.no, " encontrou o nonce primeiro: ", str(Send_block_for_all_nodes.achou_nonce))
 
                 stdoutmutex = threading.Lock()
                 threads = []
                 for no in nos:
                     #if no != atual: # verifica se o objeto não tem o mesmo nome do objeto atual    
-                    thread = Envia_nonce_para_todos_os_nos(nonce, no, stdoutmutex)
+                    thread = Send_nonce_for_all_nodes(nonce, no, stdoutmutex)
                     thread.start() # método da classe pai, dar iniciar a thread, vai criar operações básicas para poder usar 
                     threads.append(thread)
-                #Envia_bloco_para_todos_os_nos.achou_nonce = False
+                #Send_block_for_all_nodes.achou_nonce = False
                 print("O nó ", self.no, " encontrou o nonce primeiro: ", str(retorno))
            
             print("O nó ", self.no, " encontrou o nonce: ", str(retorno))
 
     print('Saindo da Thread Principal')
 
-class Envia_nonce_para_todos_os_nos(threading.Thread): # enviar nonce de um bloco para os outros nós da rede, um em cada thread
+class Send_nonce_for_all_nodes(threading.Thread): # enviar nonce de um bloco para os outros nós da rede, um em cada thread
     def __init__(self, nonce, no, mutex):
         self.nonce = nonce
         self.no = no
@@ -87,7 +87,7 @@ class Envia_nonce_para_todos_os_nos(threading.Thread): # enviar nonce de um bloc
                 return False
 
             print("O nó ", self.no, " retornou o STATUS: ", str(retorno))
-            Envia_bloco_para_todos_os_nos.achou_nonce = False
+            Send_block_for_all_nodes.achou_nonce = False
             
     print('Saindo da Thread Principal')
 
@@ -239,7 +239,7 @@ class Blockchain(): #classe que será utilizada para armazenar e gerenciar a cad
 
         for no in nos: # enviando o bloco para os nós
             if no != atual: # verifica se o objeto não tem o mesmo nome do objeto atual    
-                thread = Envia_bloco_para_todos_os_nos(bloco, no, stdoutmutex)
+                thread = Send_block_for_all_nodes(bloco, no, stdoutmutex)
                 thread.start() # método da classe pai, dar iniciar a thread, vai criar operações básicas para poder usar 
                 threads.append(thread)
         print("enviou o bloco para os nós...")

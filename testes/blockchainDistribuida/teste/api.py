@@ -92,7 +92,7 @@ def status(): # retorna todos os blocks
 def compare_chains(): # Retorna a porcentagem de processos que estão com a chain no mesmo estado que o processo central
     try:
         o = select_node()
-        porcentagem = '{"porcentagem":"' + str(o.comparaChains()) + '%"}'
+        porcentagem = '{"porcentagem":"' + str(o.compare_chains()) + '%"}'
         return porcentagem, 200 
     except: # exception caso o objeto esteja cadastrado no servidor de nomes, mas ocorra algum erro na comunicação com o mesmo
         return '{"erro": "Não foi possível fazer a comparação entre as cadeias de blocks dos processos da rede, tente novamente!"}', 500
