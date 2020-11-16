@@ -8,63 +8,25 @@
   <link rel="icon" type="imagem/png" href="{% static 'media/icons/blockchain-claro.png' %}" />
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Sistema de votação com a utilização da tecnologia de blockchain">
-  <meta name="keywords" content="sistema votação blockchain segurança">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
   <meta name="author" content="Lucas Coelho Reichert">
 
-  <title>{% if title %}{{title}} - {% endif %}Sistema de Votação</title>
+  <title>{% if title %}{{title}} - {% endif %}Agendamento de Mensagens</title>
 
-  <!-- Bootstrap core CSS -->
+  <!-- CSS -->
   <link href="{% static 'bootstrap/css/bootstrap.css' %}" rel="stylesheet">
-  <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
-
-  <!-- Custom styles for this template -->
-  <link href="{% static 'css/scrolling-nav.css' %}" rel="stylesheet">
 
 </head>
 
-<body id="page-top">
+<body>
 
-  <!-- Navigation -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
-    <div class="container">
-      <a class="navbar-brand js-scroll-trigger btn btn-outline-success" href="{% url 'index' %}">Início</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarResponsive">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="{% url 'sobre' %}">Sobre</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="{% url 'contato' %}">Contato</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="{% url 'logout' %}">Sair</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-
-  <header class="bg-success text-white">
-    {% if user_pk and user_name %}
-        <a method="POST" href="{% url 'edicao' pk=user_pk %}"><div class="btn btn-outline-success btn-dark">
-          <img class="img-fluid" src="{{ user_foto }}" alt="Foto do perfil"  width="6%">
-          {{user_name}}
-        </div></a> <br><br>
-    {% endif %}
-    <div class="container text-center">
-      <img class="img-fluid" src="{% static 'media/icons/blockchain-dark.svg' %}" alt="Era pra aparecer uma imagem aqui!"  width="12%"><br>
-      <h1>Sistema de Votação</h1>
-      <p class="lead">Utilização da tecnologia de blockchain para votação eletrônica</p>
-    </div>
+  <header class="">
     
   </header>
 
  
-  <div class="container">
+  <div class="">
     <br/>
     {% block content %}
     
@@ -76,22 +38,11 @@
 
  
   <!-- Footer -->
-  <footer class="py-5 bg-dark">
-    <div class="container">
-      <p class="m-0 text-center text-white">Copyright &copy; Lucas Coelho Reichert {% now "Y" %} </p>
+  <footer class="">
+    <div class="">
+      <p class="">Copyright &copy; Lucas Coelho Reichert {% now "Y" %} </p>
     </div>
-    <!-- /.container -->
   </footer>
-
-  <!-- Bootstrap core JavaScript -->
-  <script src="{% static 'jquery/jquery.min.js' %}"></script>
-  <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-
-  <!-- Plugin JavaScript -->
-  <script src="{% static 'jquery-easing/jquery.easing.min.js' %}"></script>
-
-  <!-- Custom JavaScript for this theme -->
-  <script src="{% static 'js/scrolling-nav.js' %}"></script>
 
 </body>
 
